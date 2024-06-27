@@ -1,7 +1,9 @@
 import sys
 import readline
 import yaml
-from modules.complete import SimpleCompleter
+import socket
+from modules.Completer import SimpleCompleter
+from modules.MySocket import MySocket
 
 def start():
     print('start')
@@ -46,7 +48,10 @@ def treatment(line: str) -> int:
     return treatment_funcs[cmd]()
 
 if __name__ == '__main__':
-    while True:
-        line = input("taskmaster> ")
-        readline.set_auto_history(True)
-        treatment(line=line)
+    clientsocket = MySocket(socket.gethostname(), 4242, 'conn')
+    msg = clientsocket.receive_msg()
+    print(msg)
+    # while True:
+    #     line = input("taskmaster> ")
+    #     readline.set_auto_history(True)
+    #     treatment(line=line)
