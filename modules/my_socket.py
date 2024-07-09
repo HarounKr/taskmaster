@@ -16,11 +16,13 @@ class MySocket:
         except OSError as e:
             sys.stderr.write(f"{e.errno} ({e.strerror})\n")
             sys.exit(1)
-
-    def accept(self):
-        return self.sock.accept()
     
-    def getsocket(self):
+    @property
+    def fd(self):
+        return self.sock.fileno()
+    
+    @property
+    def socket(self):
         return self.sock
     
     def send_data(self, data):
@@ -31,18 +33,19 @@ class MySocket:
 
     def receive_data(self):
         try:
-            full_data = self.sock.recv(10000).decode()
+            full_data = str()
+            while True:
+                client_data = self.sock.recv(16).decode('utf-8')
+                if not client_data:
+                    break
+                full_data += client_data
+                if '\n' in full_data:
+                    break
         except OSError as e:
             sys.stderr.write(f"{e.errno} ({e.strerror})\n")
         finally:
             return full_data
-        
-    def close(self):
-        self.sock.close()
     
     def nonblocking(self):
-        ready_to_read, _, _ = select.select([self.sock], [], [], 0.2)
+        ready_to_read, _, _ = select.select([self.sock], [], [], 0.1)
         return ready_to_read
-    
-    def fd(self):
-        return self.sock.fileno()
