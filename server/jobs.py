@@ -1,9 +1,35 @@
-import yaml
+import yaml, subprocess
 from pathlib import Path
 from modules.job_conf import JobConf
 from multiprocessing import Process, Queue
 
+def create_file(file_path):
+    file_name = file_path[file_path.rfind('/'):len(file_path)]
+    f = open(file_name, os.O_CREAT)
+    f.close()
+
 def job_task(jobconf, queue_out):
+    stdout_path = ""
+    stderr_path = ""
+    if hasattr(jobconf, 'cmd') and jobconf.cmd:
+        try:
+            if hasattr(jobconf, 'workingdir') and jobconf.workingdir:
+                os.chdir(jobconf.workingdir)
+                print(os.getcwd())
+            if hasattr(jobconf, 'umask') and jobconf.umask:
+                octal_int =  int(str(jobconf.umask), 8)
+                octal_mask = oct(octal_string)
+                os.umask(octal_mask)
+            if hasattr(jobconf, 'stdout') and jobconf.stdout:
+                create_file(jobconf.stdout)
+        except OSError as e:
+            print(e)
+        process = subprocess.Popen(jobconf.cmd.split(), stdout=subprocess.PIPE, sterr=subprocess.PIPE)
+        out, err = process.communicate()
+        print('Subprocess PID:', process.pid)
+        print('returncode: ', process.returncode)
+        print(out.decode())
+
     # jobconf = queue_in.get()
     jobconf.is_started = True
     queue_out.put(jobconf)
@@ -16,19 +42,21 @@ def run_jobs(jobs_name, total_jobs):
     for name in jobs_name:
         print(name)
         if name in list(total_jobs.keys()):
-            p = Process(target=job_task, args=(total_jobs[name], queue_out))
+            job_process = Process(target=job_task, args=(total_jobs[name], queue_out))
             # queue_in.put(total_jobs[name])
-            p.start()
-            processes.append(p)
+            job_process.start()
+            # job_process.append(p)
         else:
             not_found.append(name)
-    for process in processes:
-        process.join()
-    while not queue_out.empty():
+    # for process in job_process:
+    #     process.join()
+    while queue_out.empty() is not False:
         updated_jobconf = queue_out.get()
         print('name: ', updated_jobconf.name);
         total_jobs[updated_jobconf.name] = updated_jobconf
     print('alors ??\n', total_jobs)
+    monitoring_process = Process(target=monitoring_task, args=[total_jobs])
+    monitoring_process.join()
     
     if not_found:
         response = ', '.join(not_found) + ': job(s) not found.\n'

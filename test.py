@@ -3,11 +3,10 @@ import os
 import subprocess
 
 def f(l, i):
-    process = subprocess.Popen(['ping', '-c', '10', '8.8.8.8'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    process = subprocess.Popen(['ping', '-c', '30', '8.8.8.8'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = process.communicate()
-    print('Subprocess PID:', process.pid)
     print('Process PID', os.getpid())
-    print(out.decode())
+    print('Error: ', err)
 
 
 if __name__ == '__main__':
