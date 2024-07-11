@@ -1,12 +1,12 @@
 from pydantic import BaseModel
 
 class JobConf:
-    def __init__(self, config, name):
+    def __init__(self, name, conf):
         self.name = name
         self.is_started: bool = False
-        self.env: dict = dict()
-        self.pid: int = int()
-        for key, value in config.items():
+        self.env: dict = {}
+        self.pid: int = 0
+        for key, value in conf.items():
             if isinstance(value, dict):
                 for sub_key, sub_value in value.items():
                     self.env[sub_key] = sub_value

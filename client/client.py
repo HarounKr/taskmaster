@@ -3,8 +3,10 @@ import readline
 import yaml
 import socket
 import select
+from pathlib import Path
 from modules.completer import Completer
 from modules.my_socket import MySocket
+from modules.logger_handler import LoggerHandler
 
 def start():
     print('start')
@@ -23,6 +25,10 @@ def print_errors(line:str) -> int:
     return 1
 
 cmds_list = ['start', 'stop', 'pid', 'exit', 'quit', 'reload' ]
+
+def actual_path(path: str) -> str:
+    actual_path = str(Path().resolve())
+    return actual_path[0:actual_path.rfind('/')] + path
 
 def auto_completion():
     readline.parse_and_bind('tab: complete')
@@ -47,7 +53,8 @@ if __name__ == '__main__':
     auto_completion()
     clientsocket = MySocket(socket.gethostname(), 4242, 'client')
     msg = clientsocket.receive_data()
-    print(msg)
+    logger = LoggerHandler(actual_path('/logs/logs.file'))
+
     while True:
         try:
             line = input("taskmaster> ")
@@ -60,9 +67,9 @@ if __name__ == '__main__':
             ready_to_read = clientsocket.nonblocking()
             if ready_to_read:
                 data = clientsocket.receive_data()
-                print(data)
+                logger.log(data[0:len(data) - 1], 'error')
         except KeyboardInterrupt:
             break
-    clientsocket.close()
+    clientsocket.socket.close()
 
     # start nginx vogsphere docker-compose redis

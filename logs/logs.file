@@ -4879,3 +4879,199 @@
 2024-07-09 16:36:07 - INFO: Connection from ('10.13.1.5', 36866) has been established!
 2024-07-09 16:36:35 - INFO: Server shutdown
 2024-07-09 16:36:36 - ERROR: 'function' object has no attribute 'accept'
+2024-07-10 13:52:56 - INFO: Connection from ('10.12.3.5', 37768) has been established!
+2024-07-10 13:54:57 - INFO: Server shutdown
+2024-07-10 13:55:02 - INFO: Connection from ('10.12.3.5', 41452) has been established!
+2024-07-10 13:55:46 - INFO: Server shutdown
+2024-07-10 13:55:53 - INFO: Connection from ('10.12.3.5', 34166) has been established!
+2024-07-10 13:56:58 - INFO: Server shutdown
+2024-07-10 13:58:35 - INFO: Connection from ('10.12.3.5', 59258) has been established!
+2024-07-10 13:59:41 - INFO: Server shutdown
+2024-07-10 13:59:43 - INFO: Connection from ('10.12.3.5', 46232) has been established!
+2024-07-10 14:00:48 - INFO: Server shutdown
+2024-07-10 14:03:11 - INFO: Connection from ('10.12.3.5', 51134) has been established!
+2024-07-10 14:03:44 - INFO: Server shutdown
+2024-07-10 14:03:46 - INFO: Connection from ('10.12.3.5', 57138) has been established!
+2024-07-10 14:13:20 - INFO: Server shutdown
+2024-07-10 14:13:23 - INFO: Connection from ('10.12.3.5', 52200) has been established!
+2024-07-10 14:14:04 - INFO: Server shutdown
+2024-07-10 14:14:06 - INFO: Connection from ('10.12.3.5', 38544) has been established!
+2024-07-10 14:15:07 - INFO: Server shutdown
+2024-07-10 14:15:10 - INFO: Connection from ('10.12.3.5', 41268) has been established!
+2024-07-10 14:16:06 - INFO: Server shutdown
+2024-07-10 14:16:09 - INFO: Connection from ('10.12.3.5', 38602) has been established!
+2024-07-10 14:18:27 - INFO: Server shutdown
+2024-07-10 14:18:31 - INFO: Connection from ('10.12.3.5', 58666) has been established!
+2024-07-10 14:18:51 - INFO: Server shutdown
+2024-07-10 14:18:54 - INFO: Connection from ('10.12.3.5', 36124) has been established!
+2024-07-10 14:19:20 - INFO: Server shutdown
+2024-07-10 14:19:22 - INFO: Connection from ('10.12.3.5', 40312) has been established!
+2024-07-10 14:19:37 - INFO: Server shutdown
+2024-07-10 14:19:43 - INFO: Connection from ('10.12.3.5', 48288) has been established!
+2024-07-10 14:20:10 - INFO: Server shutdown
+2024-07-10 14:20:16 - INFO: Connection from ('10.12.3.5', 48904) has been established!
+2024-07-10 14:22:20 - INFO: Server shutdown
+2024-07-10 14:22:29 - INFO: Connection from ('10.12.3.5', 33382) has been established!
+2024-07-10 14:22:53 - INFO: Server shutdown
+2024-07-10 14:22:56 - INFO: Connection from ('10.12.3.5', 43568) has been established!
+2024-07-10 14:24:29 - INFO: Server shutdown
+2024-07-10 14:24:32 - INFO: Connection from ('10.12.3.5', 52714) has been established!
+2024-07-10 14:26:24 - INFO: Server shutdown
+2024-07-10 14:26:27 - INFO: Connection from ('10.12.3.5', 47478) has been established!
+2024-07-10 14:27:20 - INFO: Server shutdown
+2024-07-10 14:27:22 - INFO: Connection from ('10.12.3.5', 41656) has been established!
+2024-07-10 14:27:41 - INFO: Server shutdown
+2024-07-10 14:27:46 - INFO: Connection from ('10.12.3.5', 51598) has been established!
+2024-07-10 14:28:03 - INFO: Server shutdown
+2024-07-10 14:28:09 - INFO: Connection from ('10.12.3.5', 41312) has been established!
+2024-07-10 14:29:16 - INFO: Server shutdown
+2024-07-10 14:29:18 - INFO: Connection from ('10.12.3.5', 53934) has been established!
+2024-07-10 14:29:41 - INFO: Server shutdown
+2024-07-10 14:29:46 - INFO: Connection from ('10.12.3.5', 41166) has been established!
+2024-07-10 14:30:07 - INFO: Server shutdown
+2024-07-10 14:30:10 - INFO: Connection from ('10.12.3.5', 41258) has been established!
+2024-07-10 14:31:16 - INFO: Server shutdown
+2024-07-10 14:31:19 - INFO: Connection from ('10.12.3.5', 45512) has been established!
+2024-07-10 14:31:34 - INFO: Connection from ('10.12.3.5', 39586) has been established!
+2024-07-10 14:33:42 - INFO: Server shutdown
+2024-07-10 14:33:44 - INFO: Connection from ('10.12.3.5', 60358) has been established!
+2024-07-10 14:34:08 - INFO: Connection from ('10.12.3.5', 38972) has been established!
+2024-07-10 14:34:37 - INFO: Connection from ('10.12.3.5', 43392) has been established!
+2024-07-10 14:35:37 - INFO: Connection from ('10.12.3.5', 40150) has been established!
+2024-07-10 14:36:43 - INFO: Server shutdown
+2024-07-10 14:36:48 - INFO: Connection from ('10.12.3.5', 37928) has been established!
+2024-07-10 14:37:44 - INFO: Server shutdown
+2024-07-10 14:37:51 - INFO: Connection from ('10.12.3.5', 50002) has been established!
+2024-07-10 14:38:24 - INFO: Server shutdown
+2024-07-10 14:38:29 - INFO: Connection from ('10.12.3.5', 35186) has been established!
+2024-07-10 14:38:55 - INFO: Server shutdown
+2024-07-10 14:38:57 - INFO: Connection from ('10.12.3.5', 34908) has been established!
+2024-07-10 14:39:48 - INFO: Server shutdown
+2024-07-10 14:39:51 - INFO: Connection from ('10.12.3.5', 49784) has been established!
+2024-07-10 14:40:00 - ERROR: toto, tata, sql, ls: job(s) not found.
+2024-07-10 15:07:28 - INFO: Server shutdown
+2024-07-10 15:07:31 - INFO: Connection from ('10.12.3.5', 48014) has been established!
+2024-07-10 15:07:34 - ERROR: toto, tata, sql, ls: job(s) not found.
+2024-07-10 15:57:21 - INFO: Server shutdown
+2024-07-10 16:22:11 - INFO: Connection from ('10.12.3.5', 53944) has been established!
+2024-07-10 16:22:41 - INFO: Server shutdown
+2024-07-10 16:22:43 - INFO: Connection from ('10.12.3.5', 55288) has been established!
+2024-07-10 16:23:09 - INFO: Connection from ('10.12.3.5', 36272) has been established!
+2024-07-11 11:17:43 - INFO: Connection from ('10.12.9.3', 52606) has been established!
+2024-07-11 11:18:02 - INFO: Server shutdown
+2024-07-11 11:18:04 - INFO: Connection from ('10.12.9.3', 37492) has been established!
+2024-07-11 11:18:34 - INFO: Server shutdown
+2024-07-11 11:18:35 - INFO: Server shutdown
+2024-07-11 11:18:53 - INFO: Connection from ('10.12.9.3', 38590) has been established!
+2024-07-11 11:19:47 - INFO: Server shutdown
+2024-07-11 11:19:49 - INFO: Connection from ('10.12.9.3', 40766) has been established!
+2024-07-11 11:25:10 - INFO: Server shutdown
+2024-07-11 11:26:05 - INFO: Connection from ('10.12.9.3', 51026) has been established!
+2024-07-11 11:26:21 - INFO: Server shutdown
+2024-07-11 11:26:23 - INFO: Connection from ('10.12.9.3', 50580) has been established!
+2024-07-11 11:27:14 - INFO: Server shutdown
+2024-07-11 11:27:16 - INFO: Server shutdown
+2024-07-11 11:27:25 - INFO: Connection from ('10.12.9.3', 39942) has been established!
+2024-07-11 11:28:28 - INFO: Server shutdown
+2024-07-11 11:28:30 - INFO: Connection from ('10.12.9.3', 40628) has been established!
+2024-07-11 11:28:51 - INFO: Server shutdown
+2024-07-11 11:28:53 - INFO: Connection from ('10.12.9.3', 51334) has been established!
+2024-07-11 11:28:56 - ERROR: Welcome to the server!
+2024-07-11 11:29:31 - ERROR: [Errno 104] Connection reset by peer
+2024-07-11 11:29:32 - INFO: Connection from ('10.12.9.3', 57444) has been established!
+2024-07-11 11:30:14 - INFO: Server shutdown
+2024-07-11 11:30:16 - INFO: Server shutdown
+2024-07-11 11:30:18 - INFO: Connection from ('10.12.9.3', 35210) has been established!
+2024-07-11 11:30:24 - ERROR: tata: job(s) not found.
+2024-07-11 11:31:43 - INFO: Server shutdown
+2024-07-11 11:31:46 - INFO: Connection from ('10.12.9.3', 53458) has been established!
+2024-07-11 11:33:40 - INFO: Server shutdown
+2024-07-11 11:33:53 - INFO: Connection from ('10.12.9.3', 46456) has been established!
+2024-07-11 11:34:41 - INFO: Server shutdown
+2024-07-11 11:34:43 - INFO: Connection from ('10.12.9.3', 34706) has been established!
+2024-07-11 11:35:17 - INFO: Server shutdown
+2024-07-11 11:35:19 - INFO: Connection from ('10.12.9.3', 38320) has been established!
+2024-07-11 11:35:43 - INFO: Server shutdown
+2024-07-11 11:35:45 - INFO: Connection from ('10.12.9.3', 48278) has been established!
+2024-07-11 11:45:34 - INFO: Server shutdown
+2024-07-11 11:45:36 - INFO: Connection from ('10.12.9.3', 35886) has been established!
+2024-07-11 11:46:20 - INFO: Server shutdown
+2024-07-11 11:46:22 - INFO: Connection from ('10.12.9.3', 33800) has been established!
+2024-07-11 11:47:20 - INFO: Server shutdown
+2024-07-11 11:47:24 - INFO: Connection from ('10.12.9.3', 44006) has been established!
+2024-07-11 11:47:55 - INFO: Server shutdown
+2024-07-11 11:47:57 - INFO: Connection from ('10.12.9.3', 35926) has been established!
+2024-07-11 11:48:30 - INFO: Server shutdown
+2024-07-11 11:48:32 - INFO: Connection from ('10.12.9.3', 36534) has been established!
+2024-07-11 11:53:29 - INFO: Server shutdown
+2024-07-11 11:53:31 - INFO: Connection from ('10.12.9.3', 39422) has been established!
+2024-07-11 11:53:42 - INFO: Server shutdown
+2024-07-11 11:53:43 - INFO: Connection from ('10.12.9.3', 43754) has been established!
+2024-07-11 11:55:33 - INFO: Server shutdown
+2024-07-11 11:55:36 - INFO: Connection from ('10.12.9.3', 42486) has been established!
+2024-07-11 11:55:50 - INFO: Server shutdown
+2024-07-11 11:55:51 - INFO: Connection from ('10.12.9.3', 45692) has been established!
+2024-07-11 11:56:12 - INFO: Server shutdown
+2024-07-11 11:56:18 - INFO: Connection from ('10.12.9.3', 57518) has been established!
+2024-07-11 11:59:01 - INFO: Server shutdown
+2024-07-11 11:59:03 - INFO: Connection from ('10.12.9.3', 51506) has been established!
+2024-07-11 11:59:22 - INFO: Server shutdown
+2024-07-11 11:59:26 - INFO: Connection from ('10.12.9.3', 45930) has been established!
+2024-07-11 12:00:10 - INFO: Server shutdown
+2024-07-11 12:00:12 - INFO: Connection from ('10.12.9.3', 36472) has been established!
+2024-07-11 12:00:28 - INFO: Server shutdown
+2024-07-11 12:00:31 - INFO: Connection from ('10.12.9.3', 46658) has been established!
+2024-07-11 12:01:08 - INFO: Server shutdown
+2024-07-11 12:01:10 - INFO: Connection from ('10.12.9.3', 55776) has been established!
+2024-07-11 12:02:01 - INFO: Server shutdown
+2024-07-11 12:02:03 - INFO: Connection from ('10.12.9.3', 45502) has been established!
+2024-07-11 12:02:33 - INFO: Server shutdown
+2024-07-11 12:02:36 - INFO: Connection from ('10.12.9.3', 57302) has been established!
+2024-07-11 12:03:01 - INFO: Server shutdown
+2024-07-11 12:03:03 - INFO: Connection from ('10.12.9.3', 41740) has been established!
+2024-07-11 12:08:53 - INFO: Server shutdown
+2024-07-11 12:08:55 - INFO: Connection from ('10.12.9.3', 44328) has been established!
+2024-07-11 12:24:09 - INFO: Server shutdown
+2024-07-11 12:24:11 - INFO: Connection from ('10.12.9.3', 52866) has been established!
+2024-07-11 12:25:00 - INFO: Server shutdown
+2024-07-11 12:25:03 - INFO: Connection from ('10.12.9.3', 40762) has been established!
+2024-07-11 12:25:41 - INFO: Server shutdown
+2024-07-11 12:25:43 - INFO: Connection from ('10.12.9.3', 38370) has been established!
+2024-07-11 12:29:35 - INFO: Server shutdown
+2024-07-11 12:30:27 - INFO: Server shutdown
+2024-07-11 12:30:28 - INFO: Server shutdown
+2024-07-11 12:30:49 - INFO: Server shutdown
+2024-07-11 12:31:28 - INFO: Connection from ('10.12.9.3', 59280) has been established!
+2024-07-11 12:31:44 - INFO: Server shutdown
+2024-07-11 12:31:46 - INFO: Connection from ('10.12.9.3', 47194) has been established!
+2024-07-11 12:31:48 - ERROR: name 'Path' is not defined
+2024-07-11 12:31:48 - INFO: Server shutdown
+2024-07-11 12:31:48 - ERROR: 
+2024-07-11 12:32:38 - INFO: Connection from ('10.12.9.3', 34398) has been established!
+2024-07-11 12:32:40 - ERROR: name 'Path' is not defined
+2024-07-11 12:32:40 - INFO: Server shutdown
+2024-07-11 12:32:40 - ERROR: 
+2024-07-11 12:33:36 - INFO: Connection from ('10.12.9.3', 34582) has been established!
+2024-07-11 12:33:38 - ERROR: name 'Path' is not defined
+2024-07-11 12:33:38 - INFO: Server shutdown
+2024-07-11 12:33:38 - ERROR: 
+2024-07-11 12:34:40 - INFO: Connection from ('10.12.9.3', 34730) has been established!
+2024-07-11 12:34:43 - ERROR: name 'Path' is not defined
+2024-07-11 12:34:43 - INFO: Server shutdown
+2024-07-11 12:36:15 - INFO: Connection from ('10.12.9.3', 53710) has been established!
+2024-07-11 12:36:36 - INFO: Server shutdown
+2024-07-11 12:36:38 - INFO: Connection from ('10.12.9.3', 33950) has been established!
+2024-07-11 12:36:40 - ERROR: name 'Path' is not defined
+2024-07-11 12:36:40 - INFO: Server shutdown
+2024-07-11 12:36:40 - ERROR: 
+2024-07-11 12:37:48 - INFO: Connection from ('10.12.9.3', 44366) has been established!
+2024-07-11 12:37:49 - ERROR: name 'Path' is not defined
+2024-07-11 12:37:49 - INFO: Server shutdown
+2024-07-11 12:37:49 - ERROR: 
+2024-07-11 13:13:48 - INFO: Connection from ('10.12.9.3', 40756) has been established!
+2024-07-11 13:14:10 - INFO: Server shutdown
+2024-07-11 13:14:13 - INFO: Connection from ('10.12.9.3', 46746) has been established!
+2024-07-11 13:15:05 - INFO: Server shutdown
+2024-07-11 13:15:07 - INFO: Connection from ('10.12.9.3', 58824) has been established!
+2024-07-11 13:16:13 - INFO: Server shutdown
+2024-07-11 13:16:15 - INFO: Connection from ('10.12.9.3', 60122) has been established!
