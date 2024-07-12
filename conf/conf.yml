@@ -110,9 +110,29 @@ ls:
     ANSWER: 42
 
 ping:
-  cmd: "/usr/bin/ping 8.8.8.8"
+  cmd: "/usr/bin/ping -c 5 8.8.8.8"
   numprocs: 1
-  umask: 022
+  umask: 077
+  workingdir: /home
+  autostart: true
+  autorestart: unexpected
+  exitcodes:
+    - 0
+    - 2
+  startretries: 3
+  starttime: 5
+  stopsignal: TERM
+  stoptime: 10
+  stdout: /tmp/nginx.stdout
+  stderr: /tmp/nginx.stderr
+  env:
+    STARTED_BY: taskmaster
+    ANSWER: 42
+
+sleep:
+  cmd: "/usr/bin/python3 /home/hkrifa/Desktop/taskmaster/sleep.py"
+  numprocs: 1
+  umask: 077
   workingdir: /home
   autostart: true
   autorestart: unexpected
