@@ -1,6 +1,5 @@
 import sys
 import os
-import atexit
 
 stdin = '/dev/null'
 stdout = '/dev/null'

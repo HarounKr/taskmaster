@@ -1,12 +1,14 @@
-from pathlib import Path
-import os, sys, yaml
-from time import sleep
-from modules.daemonizer import Daemonizer
-from modules.logger_handler import LoggerHandler
-from modules.my_socket import MySocket
-import socket, select
-from jobs import init_jobs
-# from pydantic import ValidationError
+try:
+    from pathlib import Path
+    import os, sys, yaml
+    from time import sleep
+    from modules.daemonizer import Daemonizer
+    from modules.logger_handler import LoggerHandler
+    from modules.my_socket import MySocket
+    import socket, select
+    from jobs import init_jobs
+except ImportError as e:
+    raise ImportError(f"Module import failed: {e}")
 
 # export PYTHONPATH="/home/hkrifa/Desktop/taskmaster:$PYTHONPATH"
 

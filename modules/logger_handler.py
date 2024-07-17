@@ -1,4 +1,7 @@
-import logging
+try:
+    import logging
+except ImportError as e:
+    raise ImportError(f"Module import failed: {e}")
 
 class LoggerHandler:
     def __init__(self, filename: str):

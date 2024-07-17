@@ -1,11 +1,9 @@
-from pydantic import BaseModel
-
 class JobConf:
     def __init__(self, name, conf):
         self.name = name
-        self.is_started: bool = False
+        self.status = "stopped"
         self.env: dict = {}
-        self.pid: int = 0
+        # self.pid: int = 0
         for key, value in conf.items():
             if isinstance(value, dict):
                 for sub_key, sub_value in value.items():
@@ -13,15 +11,15 @@ class JobConf:
             else:
                 setattr(self, key, value)
 
-    @property
-    def pid(self):
-        return self._pid
+    # @property
+    # def pid(self):
+    #     return self._pid
     
-    @pid.setter
-    def pid(self, value):
-        if value < 0:
-            raise ValueError("PID cannot be negative")
-        self._pid = value
+    # @pid.setter
+    # def pid(self, value):
+    #     if value < 0:
+    #         raise ValueError("PID cannot be negative")
+    #     self._pid = value
         
     @property
     def getValues(self):

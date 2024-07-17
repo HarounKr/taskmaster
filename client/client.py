@@ -1,12 +1,15 @@
-import sys
-import readline
-import yaml
-import socket
-import select
-from pathlib import Path
-from modules.completer import Completer
-from modules.my_socket import MySocket
-from modules.logger_handler import LoggerHandler
+try:
+    import sys
+    import readline
+    import yaml
+    import socket
+    import select
+    from pathlib import Path
+    from modules.completer import Completer
+    from modules.my_socket import MySocket
+    from modules.logger_handler import LoggerHandler
+except ImportError as e:
+    raise ImportError(f"Module import failed: {e}")
 
 def start():
     print('start')
@@ -61,7 +64,7 @@ if __name__ == '__main__':
             readline.set_auto_history(True)
             ret = handle_line(line=line)
             if ret == 0:
-                clientsocket.send_data(data=line + '\n')
+                clientsocket.send_data(data=line)
             elif ret == -1:
                 break
             ready_to_read = clientsocket.nonblocking()

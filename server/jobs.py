@@ -1,81 +1,95 @@
-import yaml, subprocess, os
-from pathlib import Path
-from modules.job_conf import JobConf
-from multiprocessing import Process, Queue
-from concurrent.futures import ProcessPoolExecutor, as_completed
+try:
+    import yaml, subprocess, os, threading, time
+    from pathlib import Path
+    from modules.job_conf import JobConf
+    from multiprocessing import Process, Queue,Manager
+    from concurrent.futures import ProcessPoolExecutor, as_completed, ThreadPoolExecutor
+except ImportError as e:
+    raise ImportError(f"Module import failed: {e}")
 
 def create_file(file_path):
-    # file_name = file_path[file_path.rfind('/'):len(file_path)]
-    # print(file_name)
     fd = os.open(file_path, os.O_CREAT)
     os.close(fd)
 
 def job_task(jobconf):
-    stdout_path = ""
-    stderr_path = ""
+    stdout_file = subprocess.PIPE
+    stderr_file = subprocess.PIPE
     if hasattr(jobconf, 'cmd') and jobconf.cmd:
         try:
-            # if hasattr(jobconf, 'workingdir') and jobconf.workingdir:
-            #     os.chdir(jobconf.workingdir)
-            #     print(os.getcwd())
-            # if hasattr(jobconf, 'umask') and jobconf.umask:
-            #     print('umask: ', jobconf.umask)
-            #     os.umask(jobconf.umask)
-            # if hasattr(jobconf, 'stdout') and jobconf.stdout:
-            #     create_file(file_path=jobconf.stdout)
-            # if hasattr(jobconf, 'stderr') and jobconf.stderr:
-            #     create_file(file_path=jobconf.stderr)
-            # print(jobconf.cmd.split())
-            # process = subprocess.Popen(jobconf.cmd.split(), stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            # out, err = process.communicate()
-            # print('Subprocess PID:', process.pid)
-            # print('returncode: ', process.returncode)
-            # print('command output: ', out.decode())
-            jobconf.is_started = True
+            if hasattr(jobconf, 'workingdir') and jobconf.workingdir:
+                os.chdir(jobconf.workingdir)
+                # print(os.getcwd())
+            if hasattr(jobconf, 'umask') and jobconf.umask:
+                # print('umask: ', jobconf.umask)
+                os.umask(jobconf.umask)
+            if hasattr(jobconf, 'stdout') and jobconf.stdout:
+                create_file(file_path=jobconf.stdout)
+                stdout_file = open(jobconf.stdout, 'a')
+            if hasattr(jobconf, 'stderr') and jobconf.stderr:
+                create_file(file_path=jobconf.stderr)
+                stderr_file = open(jobconf.stderr, 'a')
+            with subprocess.Popen(jobconf.cmd.split(), stdout=stdout_file, stderr=stderr_file, text=True) as process:
+                print('here')
+                setattr(jobconf, 'pid', process.pid)
+                setattr(jobconf, 'status', 'running')
+                setattr(jobconf, 'status', 'completed' if process.returncode == 0 else 'failed')
+                setattr(jobconf, 'returncode', process.returncode)
+                setattr(jobconf, 'process', process) 
+                print(os.getpid())
         except OSError as e:
             print('OSError: ', e)
+            setattr(jobconf, 'status','failed')
         finally:
+            if stdout_file:
+                stdout_file.close()
+            if stderr_file:
+                stderr_file.close()
             return jobconf
 
-def run_jobs(jobs_name, total_jobs):
-    not_found = []
-    jobs = {}
-    # Créer un pool de processus
-    with ProcessPoolExecutor() as executor:
-        # Soumettre les tâches
+def monitoring_task(jobs_name, total_jobs):
+    print('------------ Monitoring Call ------------- ')
+    while True:
         for name in jobs_name:
-            if name in list(total_jobs.keys()):
-                # Soumission de la tâche job_task avec les arguments nécessaires
-                job = executor.submit(job_task, total_jobs[name])
-                print(type(job.result()))
-                print(name)
-                jobs[job] = name
+            print(total_jobs[name])
+            if total_jobs[name].process.poll() is None:
+                print('Started')
             else:
-                not_found.append(name)
+                print('stopped')
+        time.sleep(5)
 
-        # Récupération des résultats à mesure qu'ils sont disponibles
-        for job in as_completed(jobs):
-            job_name = job.result().name
-            try:
-                print(job.result().name)
-                updated_jobconf = job.result()  # Récupérer le résultat de la tâche
-                # print('name: ', updated_jobconf[job_name])
-                total_jobs[job_name] = updated_jobconf  # Mettre à jour le dictionnaire des tâches
-            except Exception as e:
-                print(f"Job {job_name} generated an exception: {e}")
-    print('Total Jobs a la sortie\n', total_jobs['ping'])
-    print('ca sort ??')
-    # monitoring_process = Process(target=monitoring_task, args=[total_jobs])
-    # monitoring_process.join()
+def run_jobs(jobs_name, total_jobs):
+    futures = {}
+    names = list(total_jobs.keys())
     
-    if not_found:
-        response = ', '.join(not_found) + ': job(s) not found.\n'
-        clientsocket.sendall(bytes(response, 'utf-8'))
+    def when_done(future):
+        try:
+            result = future.result()
+            future_name = result.name
+            total_jobs[future_name] = result
+        except Exception as e:
+            print(f"Job generated an exception: {e}")
+    with ThreadPoolExecutor() as executor:
+        # while True:
+        for name in jobs_name:
+            if name in names:
+                print('toto')
+                if total_jobs[name].status == 'stopped':
+                    future = executor.submit(job_task, total_jobs[name])
+                    future.add_done_callback(when_done)
+    monitoring = threading.Thread(target=monitoring_task, args=(jobs_name, total_jobs))
+    monitoring.start()
+    # subprocess.Popen(['/usr/bin/pwd'])
+    # monitoring.join()
+    # print('Total Jobs a la sortie\n', total_jobs['ping'])
+    
+    #if not_found:
+    #    response = ', '.join(not_found) + ': job(s) not found.\n'
+    #    clientsocket.sendall(bytes(response, 'utf-8'))
 
 def init_jobs(data_received: str, clientsocket):
-    actual_path = str(Path().resolve())
-    fileconf_path = actual_path[0:actual_path.rfind('/')] + '/conf/conf.yml'
-
+    # actual_path = str(Path().resolve())
+    # fileconf_path = actual_path[0:actual_path.rfind('/')] + '/conf/conf.yml'
+    fileconf_path = '/home/hkrifa/Bureau/taskmaster//conf/conf.yml'
     try:
         jobs_name = data_received.split()
         cmd = jobs_name.pop(0)

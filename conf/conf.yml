@@ -110,7 +110,7 @@ ls:
     ANSWER: 42
 
 ping:
-  cmd: "/usr/bin/ping -c 5 8.8.8.8"
+  cmd: "/usr/bin/ping 8.8.8.8"
   numprocs: 1
   umask: 077
   workingdir: /home

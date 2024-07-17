@@ -1,6 +1,9 @@
-import socket
-import sys
-import select
+try:
+    import socket
+    import sys
+    import select
+except ImportError as e:
+    raise ImportError(f"Module import failed: {e}")
 
 class MySocket:
     def __init__(self, host, port, type):
@@ -27,7 +30,7 @@ class MySocket:
     
     def send_data(self, data):
         try:
-            self.sock.sendall(bytes(data, "utf-8"))
+            self.sock.sendall(bytes(data + '\n', "utf-8"))
         except OSError as e:
             sys.stderr.write(f"socket connection broken: {e.errno} ({e.strerror})\n")
 
