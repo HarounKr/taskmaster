@@ -103,8 +103,8 @@ ls:
   starttime: 5
   stopsignal: TERM
   stoptime: 10
-  stdout: /tmp/nginx.stdout
-  stderr: /tmp/nginx.stderr
+  stdout: /tmp/ls.stdout
+  stderr: /tmp/ls.stderr
   env:
     STARTED_BY: taskmaster
     ANSWER: 42
@@ -123,14 +123,14 @@ ping:
   starttime: 5
   stopsignal: TERM
   stoptime: 10
-  stdout: /tmp/nginx.stdout
-  stderr: /tmp/nginx.stderr
+  stdout: /tmp/ping.stdout
+  stderr: /tmp/ping.stderr
   env:
     STARTED_BY: taskmaster
     ANSWER: 42
 
 sleep:
-  cmd: "/usr/bin/python3 /home/hkrifa/Desktop/taskmaster/sleep.py"
+  cmd: "/usr/bin/python3 /home/hkrifa/Bureau/taskmaster/sleep.py"
   numprocs: 1
   umask: 077
   workingdir: /home
@@ -143,8 +143,8 @@ sleep:
   starttime: 5
   stopsignal: TERM
   stoptime: 10
-  stdout: /tmp/nginx.stdout
-  stderr: /tmp/nginx.stderr
+  stdout: /tmp/sleep.stdout
+  stderr: /tmp/sleep.stderr
   env:
     STARTED_BY: taskmaster
     ANSWER: 42
