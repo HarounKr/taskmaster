@@ -30,7 +30,7 @@ def recv_data(clientsocket):
 if __name__ == '__main__':
     logger = LoggerHandler(actual_path('/logs/logs.file'))
     # Daemon = Daemonizer()
-    serversocket = MySocket(socket.gethostname(), 4242, 'server')
+    serversocket = MySocket(socket.gethostname(), 4442, 'server')
     try:
         while True:
             data_received: str = ""
@@ -38,9 +38,11 @@ if __name__ == '__main__':
                 clientsocket, address = serversocket.socket.accept()
                 logger.log(f'Connection from {address} has been established!', 'info')
                 data = "Welcome to the server!\n"
+                print(clientsocket.fileno())
                 clientsocket.sendall(bytes(data, "utf-8"))
                 while True:
                     data_received = recv_data(clientsocket=clientsocket)
+                    print(data_received)
                     if not data_received:
                         break
                     if data_received == 'start toto':

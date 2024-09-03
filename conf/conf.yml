@@ -95,7 +95,7 @@ ls:
   umask: 022
   workingdir: /home
   autostart: true
-  autorestart: unexpected
+  autorestart: false
   exitcodes:
     - 0
     - 2
@@ -111,7 +111,7 @@ ls:
 
 ping:
   cmd: "/usr/bin/ping 8.8.8.8"
-  numprocs: 1
+  numprocs: 3
   umask: 077
   workingdir: /home
   autostart: true
@@ -119,7 +119,7 @@ ping:
   exitcodes:
     - 0
     - 2
-  startretries: 3
+  startretries: 2
   starttime: 5
   stopsignal: TERM
   stoptime: 10
@@ -130,7 +130,7 @@ ping:
     ANSWER: 42
 
 sleep:
-  cmd: "/usr/bin/python3 /home/hkrifa/Bureau/taskmaster/sleep.py"
+  cmd: "/usr/bin/python3 /home/hkrifa/Desktop/taskmaster/sleep.py"
   numprocs: 1
   umask: 077
   workingdir: /home

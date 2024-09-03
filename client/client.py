@@ -54,10 +54,10 @@ def handle_line(line: str) -> int:
 
 if __name__ == '__main__':
     auto_completion()
-    clientsocket = MySocket(socket.gethostname(), 4242, 'client')
+    clientsocket = MySocket(socket.gethostname(), 4442, 'client')
     msg = clientsocket.receive_data()
     logger = LoggerHandler(actual_path('/logs/logs.file'))
-
+    print(clientsocket.socket.fileno())
     while True:
         try:
             line = input("taskmaster> ")

@@ -1,9 +1,17 @@
 class JobConf:
     def __init__(self, name, conf):
         self.name = name
+        self.numprocs = 1
+        self.umask = 22
+        self.workingdir = "/home"
+        self.autorestart = "unexpected"
+        self.exitcodes = [0]
+        self.startretries = 3
+        self.starttime = 1
+        self.stopsignal = "TERM"
+        self.stoptime = 10
         self.status = "stopped"
         self.env: dict = {}
-        # self.pid: int = 0
         for key, value in conf.items():
             if isinstance(value, dict):
                 for sub_key, sub_value in value.items():

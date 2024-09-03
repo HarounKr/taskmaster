@@ -1,9 +1,9 @@
 try:
-    import yaml, subprocess, os, threading, time
+    import yaml, subprocess, os, threading, time, signal
     from pathlib import Path
     from modules.job_conf import JobConf
     from multiprocessing import Process, Queue
-    from concurrent.futures import ProcessPoolExecutor, as_completed, ThreadPoolExecutor
+    from concurrent.futures import ProcessPoolExecutor, as_completed, ThreadPoolExecutor 
 except ImportError as e:
     raise ImportError(f"Module import failed: {e}")
 
@@ -11,7 +11,31 @@ def create_file(file_path):
     fd = os.open(file_path, os.O_CREAT)
     os.close(fd)
 
+def start_procs(numprocs: int, initchild, cmd) -> list:
+    procs = []
+    for i in range(0, numprocs):
+        print('i :  ', i)
+        process = subprocess.Popen(cmd.split(), text=True, preexec_fn=initchild)
+        procs.append((process, 0))
+    return procs
+
 def job_task(jobconf):
+    print(f"Monitoring process : {os.getpid()}")
+    print('Name : ', jobconf.name)
+    procs = []
+    def kill_childs(signum, frame):
+        print(f"Received signal {signum}. Terminating child processes...")
+        for proc, retries in procs:
+            if proc.poll() is None:
+                os.kill(proc.pid, signum)
+                try:
+                    proc.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    os.kill(proc.pid, signal.SIGKILL)
+        sys.exit(0)
+
+    signal.signal(signal.SIGTERM, kill_childs)
+
     if hasattr(jobconf, 'cmd') and jobconf.cmd:
         def initchild():
             if hasattr(jobconf, 'umask') and jobconf.umask:
@@ -20,53 +44,65 @@ def job_task(jobconf):
                 os.chdir(jobconf.workingdir)
             if hasattr(jobconf, 'stdout') and jobconf.stdout:
                 stdout_fd = os.open(jobconf.stdout, os.O_WRONLY | os.O_CREAT | os.O_APPEND)
-                os.dup2(stdout_fd, 1)# Redirige la sortie du processus enfant vers le fichier
+                os.dup2(stdout_fd, 1) # Redirige la sortie du processus enfant vers le fichier
                 os.close(stdout_fd)
             if hasattr(jobconf, 'stderr') and jobconf.stderr:
                 stderr_fd = os.open(jobconf.stderr, os.O_WRONLY | os.O_CREAT | os.O_APPEND)
                 os.dup2(stderr_fd, 2)
-                os.close(stderr_fd) 
+                os.close(stderr_fd)
         try:
-            with subprocess.Popen(jobconf.cmd.split(), text=True, preexec_fn=initchild) as process:
-                setattr(jobconf, 'process', process)
-                setattr(jobconf, 'process', process.pid)
-                setattr(jobconf, 'status', 'running')
-                setattr(jobconf, 'status', 'completed' if process.returncode == 0 else 'failed')
-                print(os.getpid())
+            print('Number of procs : ', jobconf.numprocs)
+            procs = start_procs(numprocs=jobconf.numprocs, initchild=initchild, cmd=jobconf.cmd)
+            while True:
+                new_procs = []
+                for proc, retries in procs:
+                    print(f"Process {proc.pid} is started with exit code {proc.returncode}")
+                    if proc.poll() is not None:
+                        print(f"Process {proc.pid} terminated with exit code {proc.returncode}")
+                        print(jobconf.autorestart)
+                        if proc.returncode not in jobconf.exitcodes and jobconf.autorestart == "unexpected":
+                            if retries < jobconf.startretries:
+                                print(f"Restarting process {proc.pid}. Attempt {retries + 1}")
+                                new_process = subprocess.Popen(jobconf.cmd.split(), text=True, preexec_fn=initchild)
+                                new_procs.append((new_process, retries + 1))
+                            else:
+                                print(f"Process {proc.pid} has exceeded the maximum retry.")
+                        elif jobconf.autorestart is True:
+                            new_process = subprocess.Popen(jobconf.cmd.split(), text=True, preexec_fn=initchild)
+                            new_procs.append((new_process, 0))
+                    else:
+                        new_procs.append((proc, retries))
+                    time.sleep(1)
+                procs = new_procs
+                if not procs:
+                    break
         except OSError as e:
             print('OSError: ', e)
-            setattr(jobconf, 'status','failed')
         finally:
             return jobconf
 
-def monitoring_tasks(jobs_name, total_jobs):
-    print('------------ Monitoring Call ------------- ')
-    while True:
-        for name in jobs_name:
-            print(name)
-            if total_jobs[name].status == 'stopped':
-                total_jobs[name] = job_task(total_jobs[name])
-            if total_jobs[name].process.poll() is None:
-                print('Started')
-            else:
-                print('Stopped')
-        time.sleep(5)
+def monitor_processes(procs):
+    while any(p.is_alive() for p in procs):
+        for p in procs:
+            print(f'pid :{p.pid} |  is_alive {p.is_alive()} ')
+            if not p.is_alive():
+                print(f"Process {p.pid} terminated.")
+        time.sleep(1)
 
 def run_jobs(jobs_name, total_jobs):
-    monitoring = threading.Thread(target=monitoring_tasks, args=(jobs_name, total_jobs))
-    monitoring.start()
-    # subprocess.Popen(['/usr/bin/pwd'])
-    # monitoring.join()
-    # print('Total Jobs a la sortie\n', total_jobs['ping'])
-    
-    #if not_found:
-    #    response = ', '.join(not_found) + ': job(s) not found.\n'
-    #    clientsocket.sendall(bytes(response, 'utf-8'))
+    procs = []
+    for name in jobs_name:
+        p = Process(target=job_task, args=(total_jobs[name],))
+        procs.append(p)
+        p.start()
+        time.sleep(0.01)
+
+    monitor_thread = threading.Thread(target=monitor_processes, args=(procs,))
+    monitor_thread.start()
 
 def init_jobs(data_received: str, clientsocket):
     actual_path = str(Path().resolve())
     fileconf_path = actual_path[0:actual_path.rfind('/')] + '/conf/conf.yml'
-    fileconf_path = '/home/hkrifa/Bureau/taskmaster//conf/conf.yml'
     try:
         jobs_name = data_received.split()
         cmd = jobs_name.pop(0)
