@@ -1,5 +1,5 @@
 try:
-    import yaml, subprocess, os, threading, time, signal
+    import yaml, subprocess, os, threading, time, signal, sys
     from pathlib import Path
     from modules.job_conf import JobConf
     from multiprocessing import Process, Queue
@@ -11,12 +11,12 @@ def create_file(file_path):
     fd = os.open(file_path, os.O_CREAT)
     os.close(fd)
 
-def start_procs(numprocs: int, initchild, cmd) -> list:
+def start_procs(numprocs: int, initchild, cmd, env:None) -> list:
     procs = []
     for i in range(0, numprocs):
-        print('i :  ', i)
-        process = subprocess.Popen(cmd.split(), text=True, preexec_fn=initchild)
-        procs.append((process, 0))
+        start_time = time.time()
+        process = subprocess.Popen(cmd.split(), text=True, preexec_fn=initchild, env=env)
+        procs.append((process, 0, start_time))
     return procs
 
 def job_task(jobconf):
@@ -37,6 +37,11 @@ def job_task(jobconf):
     signal.signal(signal.SIGTERM, kill_childs)
 
     if hasattr(jobconf, 'cmd') and jobconf.cmd:
+        if hasattr(jobconf, 'env') and jobconf.env:
+            child_env = os.environ.copy()
+            for key, value in jobconf.env.items():
+                child_env[key] = value
+
         def initchild():
             if hasattr(jobconf, 'umask') and jobconf.umask:
                 os.umask(jobconf.umask)
@@ -50,28 +55,30 @@ def job_task(jobconf):
                 stderr_fd = os.open(jobconf.stderr, os.O_WRONLY | os.O_CREAT | os.O_APPEND)
                 os.dup2(stderr_fd, 2)
                 os.close(stderr_fd)
+            print(f"envs : {os.environ['STARTED_BY']}, {os.environ['ANSWER']}")
+        
         try:
-            print('Number of procs : ', jobconf.numprocs)
-            procs = start_procs(numprocs=jobconf.numprocs, initchild=initchild, cmd=jobconf.cmd)
+            procs = start_procs(numprocs=jobconf.numprocs, initchild=initchild, cmd=jobconf.cmd, env=child_env)
             while True:
                 new_procs = []
-                for proc, retries in procs:
-                    print(f"Process {proc.pid} is started with exit code {proc.returncode}")
+                current_time = time.time()
+                for proc, retries , start_time in procs:
+                    print(f"current_time : {current_time} start_time : {start_time}\n result : {current_time - start_time}")
                     if proc.poll() is not None:
                         print(f"Process {proc.pid} terminated with exit code {proc.returncode}")
-                        print(jobconf.autorestart)
                         if proc.returncode not in jobconf.exitcodes and jobconf.autorestart == "unexpected":
-                            if retries < jobconf.startretries:
-                                print(f"Restarting process {proc.pid}. Attempt {retries + 1}")
-                                new_process = subprocess.Popen(jobconf.cmd.split(), text=True, preexec_fn=initchild)
-                                new_procs.append((new_process, retries + 1))
+                            should_restart = (current_time - start_time) < jobconf.starttime or retries < jobconf.startretries
+                            if should_restart:
+                                print(f"Restarting process {proc.pid}. Attempt {retries + 1} | start time : {current_time - start_time}s")
+                                new_process = subprocess.Popen(jobconf.cmd.split(), text=True, preexec_fn=initchild, env=child_env)
+                                new_procs.append((new_process, retries + 1, time.time()))
                             else:
-                                print(f"Process {proc.pid} has exceeded the maximum retry.")
-                        elif jobconf.autorestart is True:
-                            new_process = subprocess.Popen(jobconf.cmd.split(), text=True, preexec_fn=initchild)
-                            new_procs.append((new_process, 0))
+                                print(f"Process {proc.pid} has exceeded the maximum retry | start time : {current_time - start_time}s")
+                        elif jobconf.autorestart is True and retries < jobconf.startretries:
+                            new_process = subprocess.Popen(jobconf.cmd.split(), text=True, preexec_fn=initchild, env=child_env)
+                            new_procs.append((new_process, retries + 1, time.time()))
                     else:
-                        new_procs.append((proc, retries))
+                        new_procs.append((proc, retries, start_time))
                     time.sleep(1)
                 procs = new_procs
                 if not procs:
