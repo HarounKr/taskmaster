@@ -11,7 +11,7 @@ procs: list = []
 launched: dict = {}
 total_jobs: dict = {}
 is_first = True
-
+queue_value = [] 
 def create_file(file_path):
     fd = os.open(file_path, os.O_CREAT)
     os.close(fd)
@@ -24,7 +24,7 @@ def start_procs(numprocs: int, initchild, cmd, env:None) -> list:
         procs.append((process, 0, start_time))
     return procs
 
-def job_task(jobconf):
+def job_task(jobconf, queue_out):
     print(f"Monitoring process : {os.getpid()}")
     print('Name : ', jobconf.name)
     procs = []
@@ -32,15 +32,18 @@ def job_task(jobconf):
         print(f"Received signal {signum}. Terminating child processes...")
         for proc, _, _ in procs:
             if proc.poll() is None:
-                print('Pid child: ', proc.pid)
                 proc.terminate()
                 try:
                     proc.wait(timeout=5)
                 except subprocess.TimeoutExpired:
                     proc.kill()
+                finally:
+                    print(f'process {proc.pid} terminated')
         sys.exit(0)
 
-    signal.signal(signal.SIGTERM, kill_childs)
+    signals = [signal.SIGTERM, signal.SIGINT, signal.SIGQUIT]
+    for sig in signals:
+        signal.signal(sig, kill_childs)
 
     if hasattr(jobconf, 'cmd') and jobconf.cmd:
         child_env = None
@@ -63,6 +66,13 @@ def job_task(jobconf):
             #     os.close(stderr_fd)        
         try:
             procs = start_procs(numprocs=jobconf.numprocs, initchild=initchild, cmd=jobconf.cmd, env=child_env)
+            cpids = [] 
+            for proc, retries , start_time in procs:
+                cpids.append(proc.pid)
+            ppid = os.getpid()
+            pids = {}  
+            pids[ppid] = cpids 
+            queue_out.put(pids)
             while True:
                 new_procs = []
                 current_time = time.time()
@@ -92,13 +102,19 @@ def job_task(jobconf):
         finally:
             return jobconf
 
-def monitor_processes(procs):
-    while any(p.is_alive() for p in procs):
+def monitor_processes(procs, queue_out):
+    results = []
+    while not queue_out.empty():
+        results.append(queue_out.get())
+    print(f'Queue Results:{results} ')
+    while True:
         for p in procs:
             print(f'pid :{p.pid} |  is_alive {p.is_alive()} ')
             if not p.is_alive():
                 print(f"Process {p.pid} terminated.")
                 procs.remove(p)
+        if not procs:
+            break
         time.sleep(1)
 
 def start_jobs(jobs_name):
@@ -106,14 +122,15 @@ def start_jobs(jobs_name):
     global launched
     global total_jobs
 
+    queue_out = Queue()
     for name in jobs_name:
-        p = Process(target=job_task, args=(total_jobs[name],))
+        p = Process(target=job_task, args=(total_jobs[name], queue_out))
         procs.append(p)
         p.start()
         launched[name] = p
         time.sleep(0.01)
 
-    monitor_thread = threading.Thread(target=monitor_processes, args=(procs,))
+    monitor_thread = threading.Thread(target=monitor_processes, args=(procs, queue_out))
     monitor_thread.start()
 
 def jobs_filtering(jobs_name):
@@ -138,26 +155,35 @@ def add_conf(data_received: str):
             if data_received is None and hasattr(jobconf, 'autostart') and jobconf.autostart is True:
                 jobs_name.append(jobconf.name)
 
-def print_stop_logs(stopsignal, jobname, pid):
-    print(f'The job "{jobname}" with PID {pid} was terminated by the {stopsignal} signal.')
-
 def stop_task(jobs_name):
-    stopsignals = {
-        'TERM': (signal.SIGTERM, lambda jobname: )
-        'HUP':  signal.SIGHUP,
-        'INT':  signal.SIGINT,
-        'QUIT': signal.SIGQUIT,
-        'KILL': signal.SIGKILL,
-        'USR1': signal.SIGUSR1,
-        'USR2': signal.SIGUSR2,
-    }
-    for jobname in jobs_name:
-        job_process = launched[jobname]
-        if job_process.is_alive():
-            print(f'job : {jobname} is already alive')
 
-        else:
-            print(f'job : {jobname} is NOT alive')
+    if launched:
+        stop_signals = {
+            'TERM': signal.SIGTERM,
+            'INT':  signal.SIGINT,
+            'QUIT': signal.SIGQUIT,
+            'KILL': signal.SIGKILL,
+        }
+        for jobname in jobs_name:
+            if jobname in list(launched.keys()):
+                job_process = launched[jobname]
+                if job_process.is_alive():
+                    print(f'job : {jobname} is already alive : Terminating ...')
+                    stop_sig = total_jobs[jobname].stopsignal
+                    stop_time = total_jobs[jobname].stoptime
+                    pid = job_process.pid
+                    os.kill(pid, stop_signals[stop_sig][0])
+                    time.sleep(stop_time)
+                    if job_process.is_alive():
+                        os.kill(pid, signal.SIGKILL)
+                        time.sleep(0.2)
+                        print(f'Job {jobname} could not be stopped by {stop_sig} signal and had terminated by SIGKILL')
+                    else:
+                        print(f'Job "{jobname}" with PID {pid} was terminated by the {stop_sig} signal.')
+                else:
+                    print(f'Job {jobname} is NOT alive')
+            else:
+                print(f'Job "{jobname}" is not found')
     return
 
 def stop_jobs(jobs_name: str):
@@ -196,6 +222,7 @@ def init_jobs(data_received: str):
                 stop_jobs(jobs_name=jobs_name)
                 start_jobs(jobs_name)
         # jobs_filtering(jobs_name)
+   
     except Exception as error:
         print(f'init_jobs: {error}')
     finally:
