@@ -7,6 +7,11 @@ try:
 except ImportError as e:
     raise ImportError(f"Module import failed: {e}")
 
+procs: list = []
+launched: dict = {}
+total_jobs: dict = {}
+is_first = True
+
 def create_file(file_path):
     fd = os.open(file_path, os.O_CREAT)
     os.close(fd)
@@ -25,45 +30,44 @@ def job_task(jobconf):
     procs = []
     def kill_childs(signum, frame):
         print(f"Received signal {signum}. Terminating child processes...")
-        for proc, retries in procs:
+        for proc, _, _ in procs:
             if proc.poll() is None:
-                os.kill(proc.pid, signum)
+                print('Pid child: ', proc.pid)
+                proc.terminate()
                 try:
                     proc.wait(timeout=5)
                 except subprocess.TimeoutExpired:
-                    os.kill(proc.pid, signal.SIGKILL)
+                    proc.kill()
         sys.exit(0)
 
     signal.signal(signal.SIGTERM, kill_childs)
 
     if hasattr(jobconf, 'cmd') and jobconf.cmd:
+        child_env = None
         if hasattr(jobconf, 'env') and jobconf.env:
             child_env = os.environ.copy()
             for key, value in jobconf.env.items():
                 child_env[key] = value
-
         def initchild():
             if hasattr(jobconf, 'umask') and jobconf.umask:
                 os.umask(jobconf.umask)
             if hasattr(jobconf, 'workingdir') and jobconf.workingdir:
                 os.chdir(jobconf.workingdir)
-            if hasattr(jobconf, 'stdout') and jobconf.stdout:
-                stdout_fd = os.open(jobconf.stdout, os.O_WRONLY | os.O_CREAT | os.O_APPEND)
-                os.dup2(stdout_fd, 1) # Redirige la sortie du processus enfant vers le fichier
-                os.close(stdout_fd)
-            if hasattr(jobconf, 'stderr') and jobconf.stderr:
-                stderr_fd = os.open(jobconf.stderr, os.O_WRONLY | os.O_CREAT | os.O_APPEND)
-                os.dup2(stderr_fd, 2)
-                os.close(stderr_fd)
-            print(f"envs : {os.environ['STARTED_BY']}, {os.environ['ANSWER']}")
-        
+            # if hasattr(jobconf, 'stdout') and jobconf.stdout:
+            #     stdout_fd = os.open(jobconf.stdout, os.O_WRONLY | os.O_CREAT | os.O_APPEND)
+            #     os.dup2(stdout_fd, 1) # Redirige la sortie du processus enfant vers le fichier
+            #     os.close(stdout_fd)
+            # if hasattr(jobconf, 'stderr') and jobconf.stderr:
+            #     stderr_fd = os.open(jobconf.stderr, os.O_WRONLY | os.O_CREAT | os.O_APPEND)
+            #     os.dup2(stderr_fd, 2)
+            #     os.close(stderr_fd)        
         try:
             procs = start_procs(numprocs=jobconf.numprocs, initchild=initchild, cmd=jobconf.cmd, env=child_env)
             while True:
                 new_procs = []
                 current_time = time.time()
                 for proc, retries , start_time in procs:
-                    print(f"current_time : {current_time} start_time : {start_time}\n result : {current_time - start_time}")
+                    # print(f"current_time : {current_time} start_time : {start_time}\n result : {current_time - start_time}")
                     if proc.poll() is not None:
                         print(f"Process {proc.pid} terminated with exit code {proc.returncode}")
                         if proc.returncode not in jobconf.exitcodes and jobconf.autorestart == "unexpected":
@@ -94,31 +98,84 @@ def monitor_processes(procs):
             print(f'pid :{p.pid} |  is_alive {p.is_alive()} ')
             if not p.is_alive():
                 print(f"Process {p.pid} terminated.")
+                procs.remove(p)
         time.sleep(1)
 
-def run_jobs(jobs_name, total_jobs):
-    procs = []
+def start_jobs(jobs_name):
+    global procs
+    global launched
+    global total_jobs
+
     for name in jobs_name:
         p = Process(target=job_task, args=(total_jobs[name],))
         procs.append(p)
         p.start()
+        launched[name] = p
         time.sleep(0.01)
 
     monitor_thread = threading.Thread(target=monitor_processes, args=(procs,))
     monitor_thread.start()
 
-def init_jobs(data_received: str, clientsocket):
+def jobs_filtering(jobs_name):
+    for jobname, proc in launched.items():
+        print(jobname, proc)
+        print('\n')
+    # new_jobsname = []
+    # for jobname in jobs_name:
+    #     if jobname not in list(launched.keys()):
+    #         new_jobsname.append(jobname)
+    return new_jobsname
+
+def add_conf(data_received: str):
+    global total_jobs
+
+    fileconf_path = '/tmp/conf.yml'
+
+    with open(fileconf_path, 'r') as file:
+        yaml_content = yaml.safe_load(file)
+        for jobname, conf in yaml_content.items():
+            jobconf = JobConf(name=jobname, conf=conf)
+            total_jobs[jobname] = jobconf
+            if data_received is None and hasattr(jobconf, 'autostart') and jobconf.autostart is True:
+                jobs_name.append(jobconf.name)
+
+def stop_jobs(jobs_name: str):
+    global launched
+    global total_jobs
+
+    return
+
+def init_jobs(data_received: str):
+    global launched
+    global total_jobs
+    global is_first
+
     actual_path = str(Path().resolve())
-    fileconf_path = actual_path[0:actual_path.rfind('/')] + '/conf/conf.yml'
+    jobs_name = []
+    print('is_first \n: ', is_first)
     try:
-        jobs_name = data_received.split()
-        cmd = jobs_name.pop(0)
-        with open(fileconf_path, 'r') as file:
-            yaml_content = yaml.safe_load(file)
-            total_jobs: dict = {}
-            for jobname, conf in yaml_content.items():
-                jobconf = JobConf(name=jobname, conf=conf)
-                total_jobs[jobname] = jobconf
-        run_jobs(jobs_name=jobs_name, total_jobs=total_jobs)
+        print('data_received: ', data_received)
+        if data_received:
+            jobs_name = data_received.split()
+            cmd = jobs_name.pop(0)
+
+            if is_first is True or cmd == 'reload':
+                add_conf(data_received=data_received)
+            if cmd == 'start':
+                print('ca rentre dans le start')
+                start_jobs(jobs_name=jobs_name)
+            elif cmd == 'stop':
+                print('ca rentre dans le stop')
+                stop_jobs(jobs_name=jobs_name)
+            elif cmd in ['restart', 'reload']:
+                stop_jobs(jobs_name=jobs_name)
+                start_jobs(jobs_name)
+                for jobname, job in total_jobs.items():
+                    print(jobname, job)
+                    print('\n\n')
+        print('launched jobs: ', launched)
+        # jobs_filtering(jobs_name)
     except Exception as error:
         print(f'init_jobs: {error}')
+    finally:
+        is_first = False

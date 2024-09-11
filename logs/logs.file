@@ -5939,3 +5939,230 @@
 2024-09-04 12:27:48 - INFO: Connection from ('10.12.12.2', 33188) has been established!
 2024-09-04 12:33:30 - INFO: Server shutdown
 2024-09-04 12:33:33 - INFO: Connection from ('10.12.12.2', 38254) has been established!
+2024-09-04 14:58:45 - INFO: Server shutdown
+2024-09-04 14:59:08 - INFO: Connection from ('10.13.1.1', 57194) has been established!
+2024-09-04 14:59:10 - ERROR: local variable 'jobs_name' referenced before assignment
+2024-09-04 14:59:10 - INFO: Server shutdown
+2024-09-04 14:59:10 - ERROR: 
+2024-09-04 14:59:43 - INFO: Connection from ('10.13.1.1', 56628) has been established!
+2024-09-04 14:59:45 - ERROR: 'str' object has no attribute 'pop'
+2024-09-04 14:59:45 - INFO: Server shutdown
+2024-09-04 14:59:45 - ERROR: 
+2024-09-04 15:15:30 - INFO: Connection from ('10.13.1.1', 45566) has been established!
+2024-09-04 15:15:38 - INFO: Server shutdown
+2024-09-04 15:16:28 - INFO: Server shutdown
+2024-09-04 15:17:56 - INFO: Server shutdown
+2024-09-04 15:18:20 - INFO: Connection from ('10.13.1.1', 58874) has been established!
+2024-09-04 15:18:53 - INFO: Server shutdown
+2024-09-04 15:19:33 - INFO: Server shutdown
+2024-09-04 15:22:47 - INFO: Connection from ('10.13.1.1', 35126) has been established!
+2024-09-04 15:22:55 - INFO: Server shutdown
+2024-09-04 15:24:41 - INFO: Server shutdown
+2024-09-04 15:39:39 - INFO: Connection from ('10.13.1.1', 53504) has been established!
+2024-09-04 15:39:48 - INFO: Server shutdown
+2024-09-04 15:40:02 - INFO: Connection from ('10.13.1.1', 37702) has been established!
+2024-09-04 15:40:08 - INFO: Server shutdown
+2024-09-04 15:44:18 - INFO: Connection from ('10.13.1.1', 36448) has been established!
+2024-09-04 15:44:54 - INFO: Server shutdown
+2024-09-04 15:49:27 - INFO: Connection from ('10.13.1.1', 50046) has been established!
+2024-09-04 15:49:37 - INFO: Server shutdown
+2024-09-04 15:55:12 - INFO: Connection from ('10.13.1.1', 57180) has been established!
+2024-09-04 15:55:16 - INFO: Server shutdown
+2024-09-04 15:57:49 - INFO: Connection from ('10.13.1.1', 55010) has been established!
+2024-09-04 15:58:11 - INFO: Server shutdown
+2024-09-04 15:58:14 - INFO: Connection from ('10.13.1.1', 38522) has been established!
+2024-09-04 15:58:17 - INFO: Server shutdown
+2024-09-04 15:58:48 - INFO: Connection from ('10.13.1.1', 54302) has been established!
+2024-09-04 15:58:55 - INFO: Server shutdown
+2024-09-04 16:00:20 - INFO: Connection from ('10.13.1.1', 42084) has been established!
+2024-09-04 16:01:07 - INFO: Server shutdown
+2024-09-04 16:01:13 - INFO: Connection from ('10.13.1.1', 55168) has been established!
+2024-09-04 16:01:21 - INFO: Server shutdown
+2024-09-04 16:01:51 - INFO: Connection from ('10.13.1.1', 54868) has been established!
+2024-09-04 16:01:56 - INFO: Server shutdown
+2024-09-04 16:02:17 - ERROR: 
+2024-09-04 16:02:19 - INFO: Connection from ('10.13.1.1', 48854) has been established!
+2024-09-04 16:03:11 - INFO: Server shutdown
+2024-09-04 16:03:35 - INFO: Connection from ('10.13.1.1', 45432) has been established!
+2024-09-04 16:04:04 - INFO: Server shutdown
+2024-09-04 16:05:13 - INFO: Connection from ('10.13.1.1', 47558) has been established!
+2024-09-04 16:06:22 - INFO: Server shutdown
+2024-09-04 16:06:24 - INFO: Connection from ('10.13.1.1', 41970) has been established!
+2024-09-04 16:06:28 - INFO: Server shutdown
+2024-09-04 16:07:28 - INFO: Connection from ('10.13.1.1', 47848) has been established!
+2024-09-04 16:09:05 - INFO: Server shutdown
+2024-09-04 16:09:07 - INFO: Connection from ('10.13.1.1', 48318) has been established!
+2024-09-04 16:10:39 - INFO: Server shutdown
+2024-09-04 16:10:41 - INFO: Connection from ('10.13.1.1', 55836) has been established!
+2024-09-04 16:14:23 - INFO: Server shutdown
+2024-09-04 16:14:28 - INFO: Connection from ('10.13.1.1', 41204) has been established!
+2024-09-04 16:16:07 - INFO: Server shutdown
+2024-09-04 16:16:10 - INFO: Connection from ('10.13.1.1', 58018) has been established!
+2024-09-04 16:16:58 - INFO: Server shutdown
+2024-09-04 16:17:01 - INFO: Connection from ('10.13.1.1', 51118) has been established!
+2024-09-04 16:17:19 - INFO: Server shutdown
+2024-09-04 16:17:21 - INFO: Connection from ('10.13.1.1', 59614) has been established!
+2024-09-04 16:18:03 - INFO: Server shutdown
+2024-09-04 16:18:13 - ERROR: 
+2024-09-04 16:18:15 - INFO: Connection from ('10.13.1.1', 40278) has been established!
+2024-09-04 16:18:42 - INFO: Server shutdown
+2024-09-04 16:18:44 - INFO: Connection from ('10.13.1.1', 56378) has been established!
+2024-09-04 16:18:47 - INFO: Server shutdown
+2024-09-04 16:19:08 - INFO: Connection from ('10.13.1.1', 33256) has been established!
+2024-09-04 16:19:28 - INFO: Server shutdown
+2024-09-04 16:19:31 - INFO: Connection from ('10.13.1.1', 46102) has been established!
+2024-09-04 16:25:16 - INFO: Server shutdown
+2024-09-04 16:25:18 - INFO: Connection from ('10.13.1.1', 51356) has been established!
+2024-09-04 16:27:14 - INFO: Server shutdown
+2024-09-04 16:27:16 - INFO: Connection from ('10.13.1.1', 33398) has been established!
+2024-09-04 16:27:41 - INFO: Server shutdown
+2024-09-04 16:27:42 - INFO: Connection from ('10.13.1.1', 51956) has been established!
+2024-09-04 16:27:46 - INFO: Server shutdown
+2024-09-05 13:37:27 - INFO: Connection from ('10.14.2.4', 40188) has been established!
+2024-09-05 13:38:47 - INFO: Server shutdown
+2024-09-05 13:38:50 - INFO: Connection from ('10.14.2.4', 33234) has been established!
+2024-09-05 13:38:58 - INFO: Server shutdown
+2024-09-05 13:39:22 - INFO: Connection from ('10.14.2.4', 38390) has been established!
+2024-09-05 13:40:04 - INFO: Server shutdown
+2024-09-05 13:46:11 - INFO: Connection from ('10.14.2.4', 47628) has been established!
+2024-09-05 13:47:53 - INFO: Server shutdown
+2024-09-05 13:47:54 - INFO: Connection from ('10.14.2.4', 40160) has been established!
+2024-09-05 13:49:02 - INFO: Server shutdown
+2024-09-05 13:49:03 - INFO: Connection from ('10.14.2.4', 46398) has been established!
+2024-09-05 13:49:23 - INFO: Server shutdown
+2024-09-05 13:49:24 - INFO: Connection from ('10.14.2.4', 49326) has been established!
+2024-09-05 13:49:44 - INFO: Connection from ('10.14.2.4', 50692) has been established!
+2024-09-05 13:49:46 - INFO: Server shutdown
+2024-09-05 13:49:47 - INFO: Connection from ('10.14.2.4', 50700) has been established!
+2024-09-05 13:49:57 - INFO: Server shutdown
+2024-09-05 13:50:07 - INFO: Connection from ('10.14.2.4', 44718) has been established!
+2024-09-05 13:51:55 - INFO: Server shutdown
+2024-09-05 13:51:58 - INFO: Connection from ('10.14.2.4', 36938) has been established!
+2024-09-05 13:52:29 - INFO: Server shutdown
+2024-09-05 13:52:32 - INFO: Connection from ('10.14.2.4', 37756) has been established!
+2024-09-05 13:53:51 - INFO: Server shutdown
+2024-09-05 13:53:53 - INFO: Server shutdown
+2024-09-05 13:54:07 - INFO: Connection from ('10.14.2.4', 59458) has been established!
+2024-09-05 13:55:22 - INFO: Server shutdown
+2024-09-05 13:55:27 - INFO: Connection from ('10.14.2.4', 40596) has been established!
+2024-09-05 13:57:15 - INFO: Server shutdown
+2024-09-05 13:57:23 - ERROR: 
+2024-09-05 13:57:25 - INFO: Connection from ('10.14.2.4', 38338) has been established!
+2024-09-05 14:35:44 - INFO: Server shutdown
+2024-09-05 14:35:46 - INFO: Connection from ('10.14.2.4', 41682) has been established!
+2024-09-05 14:52:53 - INFO: Server shutdown
+2024-09-05 14:52:55 - INFO: Connection from ('10.14.2.4', 58490) has been established!
+2024-09-05 14:54:01 - INFO: Server shutdown
+2024-09-05 14:54:14 - INFO: Connection from ('10.14.2.4', 60306) has been established!
+2024-09-05 14:54:41 - INFO: Server shutdown
+2024-09-05 14:55:25 - ERROR: 
+2024-09-05 14:55:26 - INFO: Connection from ('10.14.2.4', 39834) has been established!
+2024-09-05 14:55:37 - INFO: Server shutdown
+2024-09-05 14:55:53 - INFO: Connection from ('10.14.2.4', 53392) has been established!
+2024-09-05 14:56:00 - INFO: Server shutdown
+2024-09-05 14:56:18 - INFO: Connection from ('10.14.2.4', 33632) has been established!
+2024-09-05 14:56:23 - INFO: Server shutdown
+2024-09-05 14:56:56 - INFO: Connection from ('10.14.2.4', 46386) has been established!
+2024-09-05 14:57:04 - INFO: Server shutdown
+2024-09-05 14:59:13 - INFO: Connection from ('10.14.2.4', 40516) has been established!
+2024-09-05 14:59:20 - INFO: Connection from ('10.14.2.4', 35486) has been established!
+2024-09-05 14:59:27 - INFO: Server shutdown
+2024-09-05 15:03:55 - INFO: Connection from ('10.14.2.4', 46484) has been established!
+2024-09-05 15:04:03 - INFO: Server shutdown
+2024-09-05 15:04:07 - INFO: Connection from ('10.14.2.4', 52196) has been established!
+2024-09-05 15:04:11 - INFO: Server shutdown
+2024-09-05 15:04:34 - INFO: Connection from ('10.14.2.4', 36362) has been established!
+2024-09-05 15:04:59 - INFO: Server shutdown
+2024-09-05 15:05:03 - INFO: Connection from ('10.14.2.4', 44316) has been established!
+2024-09-05 15:05:33 - INFO: Server shutdown
+2024-09-05 15:05:35 - INFO: Connection from ('10.14.2.4', 36882) has been established!
+2024-09-05 15:06:10 - INFO: Server shutdown
+2024-09-05 15:06:22 - INFO: Connection from ('10.14.2.4', 57876) has been established!
+2024-09-05 15:06:47 - INFO: Server shutdown
+2024-09-05 15:06:48 - INFO: Connection from ('10.14.2.4', 33696) has been established!
+2024-09-05 15:07:22 - INFO: Server shutdown
+2024-09-05 15:17:53 - INFO: Connection from ('10.14.2.4', 46942) has been established!
+2024-09-05 15:18:29 - INFO: Server shutdown
+2024-09-05 15:20:16 - INFO: Connection from ('10.14.2.4', 42512) has been established!
+2024-09-05 15:20:30 - INFO: Server shutdown
+2024-09-05 16:09:09 - INFO: Connection from ('10.14.2.4', 45522) has been established!
+2024-09-05 16:09:27 - INFO: Server shutdown
+2024-09-05 16:09:29 - INFO: Connection from ('10.14.2.4', 35786) has been established!
+2024-09-05 16:09:44 - INFO: Server shutdown
+2024-09-05 16:09:46 - INFO: Connection from ('10.14.2.4', 53842) has been established!
+2024-09-05 16:09:59 - INFO: Server shutdown
+2024-09-05 16:10:20 - INFO: Connection from ('10.14.2.4', 51352) has been established!
+2024-09-05 16:10:25 - INFO: Server shutdown
+2024-09-06 14:10:19 - INFO: Connection from ('10.13.1.6', 35534) has been established!
+2024-09-06 14:14:17 - INFO: Server shutdown
+2024-09-06 14:14:19 - INFO: Connection from ('10.13.1.6', 46854) has been established!
+2024-09-06 14:22:47 - INFO: Server shutdown
+2024-09-06 14:23:19 - INFO: Connection from ('10.13.1.6', 51416) has been established!
+2024-09-06 14:23:47 - INFO: Server shutdown
+2024-09-06 14:23:49 - INFO: Connection from ('10.13.1.6', 51868) has been established!
+2024-09-06 14:24:08 - INFO: Server shutdown
+2024-09-06 14:24:11 - INFO: Connection from ('10.13.1.6', 34832) has been established!
+2024-09-06 14:24:35 - INFO: Server shutdown
+2024-09-06 14:24:50 - INFO: Connection from ('10.13.1.6', 33958) has been established!
+2024-09-06 14:29:21 - INFO: Server shutdown
+2024-09-06 14:29:23 - INFO: Connection from ('10.13.1.6', 42720) has been established!
+2024-09-06 14:30:31 - INFO: Server shutdown
+2024-09-06 14:31:05 - INFO: Connection from ('10.13.1.6', 34910) has been established!
+2024-09-06 14:31:30 - INFO: Server shutdown
+2024-09-06 14:31:32 - INFO: Connection from ('10.13.1.6', 34610) has been established!
+2024-09-06 15:08:35 - INFO: Server shutdown
+2024-09-06 15:08:36 - INFO: Server shutdown
+2024-09-06 15:08:45 - INFO: Connection from ('10.13.1.6', 58464) has been established!
+2024-09-06 15:09:32 - INFO: Server shutdown
+2024-09-06 15:09:34 - INFO: Connection from ('10.13.1.6', 48030) has been established!
+2024-09-06 15:10:02 - INFO: Server shutdown
+2024-09-06 15:10:03 - INFO: Connection from ('10.13.1.6', 33560) has been established!
+2024-09-06 15:10:34 - INFO: Server shutdown
+2024-09-06 15:10:35 - INFO: Connection from ('10.13.1.6', 37950) has been established!
+2024-09-06 15:11:20 - INFO: Server shutdown
+2024-09-06 15:11:22 - INFO: Connection from ('10.13.1.6', 58328) has been established!
+2024-09-06 15:11:37 - INFO: Server shutdown
+2024-09-06 15:11:39 - INFO: Connection from ('10.13.1.6', 50768) has been established!
+2024-09-06 15:12:08 - INFO: Server shutdown
+2024-09-06 15:12:10 - INFO: Connection from ('10.13.1.6', 50864) has been established!
+2024-09-06 15:12:41 - INFO: Server shutdown
+2024-09-06 15:12:42 - INFO: Connection from ('10.13.1.6', 55878) has been established!
+2024-09-06 15:13:01 - INFO: Server shutdown
+2024-09-06 15:13:05 - INFO: Connection from ('10.13.1.6', 50252) has been established!
+2024-09-06 15:17:49 - INFO: Server shutdown
+2024-09-06 15:18:41 - INFO: Connection from ('10.13.1.6', 58956) has been established!
+2024-09-06 15:22:30 - INFO: Server shutdown
+2024-09-06 15:22:32 - INFO: Connection from ('10.13.1.6', 41944) has been established!
+2024-09-06 15:22:42 - INFO: Server shutdown
+2024-09-06 15:22:57 - INFO: Connection from ('10.13.1.6', 54146) has been established!
+2024-09-06 15:23:21 - INFO: Server shutdown
+2024-09-06 15:23:39 - INFO: Connection from ('10.13.1.6', 35110) has been established!
+2024-09-06 15:24:57 - INFO: Server shutdown
+2024-09-06 15:24:59 - INFO: Connection from ('10.13.1.6', 35196) has been established!
+2024-09-06 15:25:30 - INFO: Server shutdown
+2024-09-06 15:25:39 - INFO: Connection from ('10.13.1.6', 43996) has been established!
+2024-09-06 15:45:10 - INFO: Server shutdown
+2024-09-06 15:45:26 - INFO: Connection from ('10.13.1.6', 54260) has been established!
+2024-09-06 15:45:47 - INFO: Server shutdown
+2024-09-06 15:46:26 - INFO: Connection from ('10.13.1.6', 46494) has been established!
+2024-09-06 15:51:23 - INFO: Server shutdown
+2024-09-06 15:54:19 - INFO: Connection from ('10.13.1.6', 60142) has been established!
+2024-09-06 15:55:48 - INFO: Server shutdown
+2024-09-06 15:57:23 - INFO: Connection from ('10.13.1.6', 44112) has been established!
+2024-09-06 15:57:29 - INFO: Server shutdown
+2024-09-06 15:57:41 - INFO: Connection from ('10.13.1.6', 33352) has been established!
+2024-09-06 15:59:04 - INFO: Server shutdown
+2024-09-06 16:01:48 - INFO: Connection from ('10.13.1.6', 33006) has been established!
+2024-09-06 16:08:34 - INFO: Server shutdown
+2024-09-06 16:08:35 - INFO: Connection from ('10.13.1.6', 50258) has been established!
+2024-09-06 16:10:24 - INFO: Server shutdown
+2024-09-06 16:10:29 - INFO: Server shutdown
+2024-09-06 16:10:46 - INFO: Connection from ('10.13.1.6', 57926) has been established!
+2024-09-06 16:11:55 - INFO: Connection from ('10.13.1.6', 52458) has been established!
+2024-09-06 16:13:16 - INFO: Server shutdown
+2024-09-10 09:42:41 - INFO: Connection from ('10.14.2.2', 51474) has been established!
+2024-09-10 09:47:31 - INFO: Server shutdown
+2024-09-10 09:47:32 - INFO: Connection from ('10.14.2.2', 41684) has been established!
+2024-09-10 09:48:53 - INFO: Server shutdown
+2024-09-10 09:49:32 - INFO: Connection from ('10.14.2.2', 41482) has been established!
+2024-09-10 09:50:08 - INFO: Server shutdown

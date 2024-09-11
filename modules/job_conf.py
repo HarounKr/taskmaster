@@ -3,6 +3,7 @@ class JobConf:
         self.name = name
         self.numprocs = 1
         self.umask = 22
+        self.autostart = True
         self.workingdir = "/home"
         self.autorestart = "unexpected"
         self.exitcodes = [0]
@@ -10,11 +11,12 @@ class JobConf:
         self.starttime = 1
         self.stopsignal = "TERM"
         self.stoptime = 10
-        self.status = "stopped"
         self.env: dict = {}
         for key, value in conf.items():
             if isinstance(value, dict):
                 for sub_key, sub_value in value.items():
+                    if type(sub_value) is int:
+                        sub_value = str(sub_value)
                     self.env[sub_key] = sub_value
             else:
                 setattr(self, key, value)

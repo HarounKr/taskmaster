@@ -94,7 +94,7 @@ ls:
   numprocs: 1
   umask: 022
   workingdir: /home
-  autostart: true
+  autostart: false
   autorestart: true
   exitcodes:
     - 0
@@ -128,6 +128,26 @@ ping:
   env:
     STARTED_BY: taskmaster
     ANSWER: 42
+
+env:
+  cmd: "/usr/bin/python3 /home/hkrifa/Desktop/taskmaster/print_env.py"
+  numprocs: 1
+  umask: 077
+  workingdir: /home
+  autostart: true
+  autorestart: unexpected
+  exitcodes:
+    - 0
+    - 2
+  startretries: 2
+  starttime: 2
+  stopsignal: TERM
+  stoptime: 10
+  stdout: /tmp/ping.stdout
+  stderr: /tmp/ping.stderr
+  # env:
+  #   STARTED_BY: taskmaster
+  #   ANSWER: 42
 
 sleep:
   cmd: "/usr/bin/python3 /home/hkrifa/Desktop/taskmaster/sleep.py"

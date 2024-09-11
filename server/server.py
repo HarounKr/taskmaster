@@ -31,6 +31,7 @@ if __name__ == '__main__':
     logger = LoggerHandler(actual_path('/logs/logs.file'))
     # Daemon = Daemonizer()
     serversocket = MySocket(socket.gethostname(), 4442, 'server')
+    # init_jobs(None)
     try:
         while True:
             data_received: str = ""
@@ -38,17 +39,15 @@ if __name__ == '__main__':
                 clientsocket, address = serversocket.socket.accept()
                 logger.log(f'Connection from {address} has been established!', 'info')
                 data = "Welcome to the server!\n"
-                print(clientsocket.fileno())
                 clientsocket.sendall(bytes(data, "utf-8"))
                 while True:
                     data_received = recv_data(clientsocket=clientsocket)
-                    print(data_received)
                     if not data_received:
                         break
                     if data_received == 'start toto':
                         clientsocket.sendall(bytes(data, 'utf-8'))
                         print(clientsocket.fileno())
-                    init_jobs(data_received=data_received, clientsocket=clientsocket)
+                    init_jobs(data_received=data_received)
                 clientsocket.close()
             except OSError as e:
                 logger.log(str(e), 'error')
