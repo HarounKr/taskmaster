@@ -117,13 +117,12 @@ def start_jobs(jobs_name):
     monitor_thread.start()
 
 def jobs_filtering(jobs_name):
-    for jobname, proc in launched.items():
-        print(jobname, proc)
-        print('\n')
-    # new_jobsname = []
-    # for jobname in jobs_name:
-    #     if jobname not in list(launched.keys()):
-    #         new_jobsname.append(jobname)
+
+    if launched:
+        new_jobsname = []
+        for key, value in launched.keys():
+            if key not in jobs_name or (key in jobs_name):
+                return
     return new_jobsname
 
 def add_conf(data_received: str):
@@ -139,9 +138,35 @@ def add_conf(data_received: str):
             if data_received is None and hasattr(jobconf, 'autostart') and jobconf.autostart is True:
                 jobs_name.append(jobconf.name)
 
+def print_stop_logs(stopsignal, jobname, pid):
+    print(f'The job "{jobname}" with PID {pid} was terminated by the {stopsignal} signal.')
+
+def stop_task(jobs_name):
+    stopsignals = {
+        'TERM': (signal.SIGTERM, lambda jobname: )
+        'HUP':  signal.SIGHUP,
+        'INT':  signal.SIGINT,
+        'QUIT': signal.SIGQUIT,
+        'KILL': signal.SIGKILL,
+        'USR1': signal.SIGUSR1,
+        'USR2': signal.SIGUSR2,
+    }
+    for jobname in jobs_name:
+        job_process = launched[jobname]
+        if job_process.is_alive():
+            print(f'job : {jobname} is already alive')
+
+        else:
+            print(f'job : {jobname} is NOT alive')
+    return
+
 def stop_jobs(jobs_name: str):
     global launched
     global total_jobs
+
+    stop_thread = threading.Thread(target=stop_task, args=(jobs_name,))
+    stop_thread.start()
+    stop_thread.join()
 
     return
 
@@ -170,10 +195,6 @@ def init_jobs(data_received: str):
             elif cmd in ['restart', 'reload']:
                 stop_jobs(jobs_name=jobs_name)
                 start_jobs(jobs_name)
-                for jobname, job in total_jobs.items():
-                    print(jobname, job)
-                    print('\n\n')
-        print('launched jobs: ', launched)
         # jobs_filtering(jobs_name)
     except Exception as error:
         print(f'init_jobs: {error}')

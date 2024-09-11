@@ -130,7 +130,7 @@ ping:
     ANSWER: 42
 
 env:
-  cmd: "/usr/bin/python3 /home/hkrifa/Desktop/taskmaster/print_env.py"
+  cmd: "/usr/bin/python3 /home/hkrifa/Bureau/taskmaster/print_env.py"
   numprocs: 1
   umask: 077
   workingdir: /home
@@ -150,7 +150,7 @@ env:
   #   ANSWER: 42
 
 sleep:
-  cmd: "/usr/bin/python3 /home/hkrifa/Desktop/taskmaster/sleep.py"
+  cmd: "/usr/bin/python3 /home/hkrifa/Bureau/taskmaster/sleep.py"
   numprocs: 1
   umask: 077
   workingdir: /home
