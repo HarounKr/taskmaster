@@ -11,7 +11,8 @@ procs: list = []
 launched: dict = {}
 total_jobs: dict = {}
 is_first = True
-queue_value = [] 
+queue_value = {}
+
 def create_file(file_path):
     fd = os.open(file_path, os.O_CREAT)
     os.close(fd)
@@ -25,8 +26,6 @@ def start_procs(numprocs: int, initchild, cmd, env:None) -> list:
     return procs
 
 def job_task(jobconf, queue_out):
-    print(f"Monitoring process : {os.getpid()}")
-    print('Name : ', jobconf.name)
     procs = []
     def kill_childs(signum, frame):
         print(f"Received signal {signum}. Terminating child processes...")
@@ -56,14 +55,14 @@ def job_task(jobconf, queue_out):
                 os.umask(jobconf.umask)
             if hasattr(jobconf, 'workingdir') and jobconf.workingdir:
                 os.chdir(jobconf.workingdir)
-            # if hasattr(jobconf, 'stdout') and jobconf.stdout:
-            #     stdout_fd = os.open(jobconf.stdout, os.O_WRONLY | os.O_CREAT | os.O_APPEND)
-            #     os.dup2(stdout_fd, 1) # Redirige la sortie du processus enfant vers le fichier
-            #     os.close(stdout_fd)
-            # if hasattr(jobconf, 'stderr') and jobconf.stderr:
-            #     stderr_fd = os.open(jobconf.stderr, os.O_WRONLY | os.O_CREAT | os.O_APPEND)
-            #     os.dup2(stderr_fd, 2)
-            #     os.close(stderr_fd)        
+            if hasattr(jobconf, 'stdout') and jobconf.stdout:
+                stdout_fd = os.open(jobconf.stdout, os.O_WRONLY | os.O_CREAT | os.O_APPEND)
+                os.dup2(stdout_fd, 1) # Redirige la sortie du processus enfant vers le fichier
+                os.close(stdout_fd)
+            if hasattr(jobconf, 'stderr') and jobconf.stderr:
+                stderr_fd = os.open(jobconf.stderr, os.O_WRONLY | os.O_CREAT | os.O_APPEND)
+                os.dup2(stderr_fd, 2)
+                os.close(stderr_fd)        
         try:
             procs = start_procs(numprocs=jobconf.numprocs, initchild=initchild, cmd=jobconf.cmd, env=child_env)
             cpids = [] 
@@ -71,7 +70,7 @@ def job_task(jobconf, queue_out):
                 cpids.append(proc.pid)
             ppid = os.getpid()
             pids = {}  
-            pids[ppid] = cpids 
+            pids[ppid] = cpids
             queue_out.put(pids)
             while True:
                 new_procs = []
@@ -86,11 +85,15 @@ def job_task(jobconf, queue_out):
                                 print(f"Restarting process {proc.pid}. Attempt {retries + 1} | start time : {current_time - start_time}s")
                                 new_process = subprocess.Popen(jobconf.cmd.split(), text=True, preexec_fn=initchild, env=child_env)
                                 new_procs.append((new_process, retries + 1, time.time()))
+                                cpids.append(new_process.pid)
                             else:
                                 print(f"Process {proc.pid} has exceeded the maximum retry | start time : {current_time - start_time}s")
                         elif jobconf.autorestart is True and retries < jobconf.startretries:
                             new_process = subprocess.Popen(jobconf.cmd.split(), text=True, preexec_fn=initchild, env=child_env)
                             new_procs.append((new_process, retries + 1, time.time()))
+                            cpids.append(new_process.pid)
+                        pids[ppid] = cpids
+                        queue_out.put(pids)
                     else:
                         new_procs.append((proc, retries, start_time))
                     time.sleep(1)
@@ -99,21 +102,29 @@ def job_task(jobconf, queue_out):
                     break
         except OSError as e:
             print('OSError: ', e)
-        finally:
-            return jobconf
 
 def monitor_processes(procs, queue_out):
-    results = []
-    while not queue_out.empty():
-        results.append(queue_out.get())
-    print(f'Queue Results:{results} ')
     while True:
+        while not queue_out.empty():
+            queue_value.update(queue_out.get())
+       # print(f'Queue Results: {queue_value} ')
         for p in procs:
-            print(f'pid :{p.pid} |  is_alive {p.is_alive()} ')
             if not p.is_alive():
                 print(f"Process {p.pid} terminated.")
+                if p.pid in list(queue_value.keys()):
+                    for cpid in queue_value[p.pid]:
+                        try:
+                            proc_exist = os.kill(cpid, 0)
+                            if proc_exist is None:
+                                os.kill(cpid ,signal.SIGTERM)
+                                time.sleep(0.1)
+                                print(f"Child process {cpid} terminated by TERM signal.")
+                        except:
+                            print(f"Child process {cpid} does not exit.")       
                 procs.remove(p)
+                queue_value.pop(p.pid, None)
         if not procs:
+            print('Break monitor loop')
             break
         time.sleep(1)
 
@@ -156,7 +167,6 @@ def add_conf(data_received: str):
                 jobs_name.append(jobconf.name)
 
 def stop_task(jobs_name):
-
     if launched:
         stop_signals = {
             'TERM': signal.SIGTERM,
@@ -172,7 +182,7 @@ def stop_task(jobs_name):
                     stop_sig = total_jobs[jobname].stopsignal
                     stop_time = total_jobs[jobname].stoptime
                     pid = job_process.pid
-                    os.kill(pid, stop_signals[stop_sig][0])
+                    os.kill(pid, stop_signals[stop_sig])
                     time.sleep(stop_time)
                     if job_process.is_alive():
                         os.kill(pid, signal.SIGKILL)
@@ -187,33 +197,58 @@ def stop_task(jobs_name):
     return
 
 def stop_jobs(jobs_name: str):
-    global launched
-    global total_jobs
-
     stop_thread = threading.Thread(target=stop_task, args=(jobs_name,))
     stop_thread.start()
     stop_thread.join()
 
     return
 
-def init_jobs(data_received: str):
+def parse_jobsname(jobs_name, cmd, clientsocket):
+    global launched
+
+    def check_duplicate(jobs_name):
+        new_jobsname = []
+        for item in jobs_name:
+            if item not in new_jobsname:
+                new_jobsname.append(item)
+        return new_jobsname
+    
+    to_return = []
+    to_remove = [] 
+    new_jobsname = check_duplicate(jobs_name=jobs_name)
+    launched_jobsname = list(launched.keys())
+    if launched:
+        for jobname in new_jobsname:
+            if jobname in launched_jobsname:
+                if (not launched[jobname].is_alive() and cmd == 'start') or (launched[jobname].is_alive() and cmd == 'stop'):
+                    to_return.append(jobname)
+                else:
+                    to_remove.append(jobname)
+            elif jobname not in launched_jobsname and cmd == 'start':
+                to_return.append(jobname)
+        print('to remove : ' , to_remove)
+        data = {
+            'start': f'job(s) {to_remove} already started.\n',
+            'stop' : f'cannot stop job(s) {to_remove} : non started.\n'
+        }
+        clientsocket.sendall(bytes(data[cmd] , 'utf-8'))
+        new_jobsname = to_return
+    return new_jobsname
+
+def init_jobs(data_received: str, clientsocket):
     global launched
     global total_jobs
     global is_first
 
-    actual_path = str(Path().resolve())
     jobs_name = []
-    print('is_first \n: ', is_first)
     try:
-        print('data_received: ', data_received)
         if data_received:
             jobs_name = data_received.split()
             cmd = jobs_name.pop(0)
-
             if is_first is True or cmd == 'reload':
                 add_conf(data_received=data_received)
+            jobs_name = parse_jobsname(jobs_name=jobs_name, cmd=cmd, clientsocket=clientsocket)
             if cmd == 'start':
-                print('ca rentre dans le start')
                 start_jobs(jobs_name=jobs_name)
             elif cmd == 'stop':
                 print('ca rentre dans le stop')
@@ -224,6 +259,6 @@ def init_jobs(data_received: str):
         # jobs_filtering(jobs_name)
    
     except Exception as error:
-        print(f'init_jobs: {error}')
+        print(f'error in init_jobs: {error}')
     finally:
         is_first = False

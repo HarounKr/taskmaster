@@ -47,7 +47,7 @@ if __name__ == '__main__':
                     if data_received == 'start toto':
                         clientsocket.sendall(bytes(data, 'utf-8'))
                         print(clientsocket.fileno())
-                    init_jobs(data_received=data_received)
+                    init_jobs(data_received=data_received, clientsocket=clientsocket)
                 clientsocket.close()
             except OSError as e:
                 logger.log(str(e), 'error')

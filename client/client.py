@@ -68,8 +68,10 @@ if __name__ == '__main__':
             elif ret == -1:
                 break
             ready_to_read = clientsocket.nonblocking()
+            print(ready_to_read)
             if ready_to_read:
                 data = clientsocket.receive_data()
+                print(data)
                 logger.log(data[0:len(data) - 1], 'error')
         except KeyboardInterrupt:
             break
