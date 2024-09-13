@@ -1,0 +1,4 @@
+echo echo PYTHONPATH="/home/user/Desktop/taskmaster:$PYTHONPATH" >> ~/.bashrc
+source ~/.bashrc
+python3 -m venv /home/user/Desktop/taskmaster/environment/venv
+source /home/user/Desktop/taskmaster/environment/venv/bin/activate

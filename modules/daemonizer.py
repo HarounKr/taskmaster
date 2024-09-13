@@ -13,7 +13,7 @@ class Daemonizer:
                 # Quitter le premier parent.
                 sys.exit(0)
         except OSError as e:
-            sys.stderr.write(f"[SERVER]: fork #1 failed: {e.errno} ({e.strerror})\n")
+            sys.stderr.write(f"[taskmasterd]: fork #1 failed: {e.errno} ({e.strerror})\n")
             sys.exit(1)
 
         # Se détacher de l'environnement du parent
@@ -27,7 +27,7 @@ class Daemonizer:
                 # quitter le second parent.
                 sys.exit(0)
         except OSError as e:
-            sys.stderr.write(f"[SERVER]: fork #2 failed: {e.errno} ({e.strerror})\n")
+            sys.stderr.write(f"[taskmasterd]: fork #2 failed: {e.errno} ({e.strerror})\n")
             sys.exit(1)
 
         # Redirection des descripteurs de fichier standard

@@ -4,7 +4,7 @@ try:
     from modules.job_conf import JobConf
     from multiprocessing import Process, Queue
 except ImportError as e:
-    raise ImportError(f"[SERVER]: Module import failed: {e}")
+    raise ImportError(f"[taskmasterd]: Module import failed: {e}")
 
 procs: list = []
 launched: dict = {}
@@ -26,7 +26,7 @@ def start_procs(numprocs: int, initchild, cmd, env:None) -> list:
 
 def sig_handler(procs):
     def kill_childs(signum, frame):
-        logger.log(f"[SERVER]: received signal {signum}. Terminating child processes...", 'info')
+        logger.log(f"[taskmasterd]: received signal {signum}. Terminating child processes...", 'info')
         for proc, _, _ in procs:
             if proc.poll() is None:
                 proc.terminate()
@@ -35,7 +35,7 @@ def sig_handler(procs):
                 except subprocess.TimeoutExpired:
                     proc.kill()
                 finally:
-                    logger.log(f'[SERVER]: process #{proc.pid} terminated', 'info')
+                    logger.log(f'[taskmasterd]: process #{proc.pid} terminated', 'info')
         sys.exit(0)
         
     signals = [signal.SIGTERM, signal.SIGINT, signal.SIGQUIT]
@@ -80,16 +80,16 @@ def job_task(jobconf, queue_out):
                 for proc, retries , start_time in procs:
                     # logger.log(f"current_time : {current_time} start_time : {start_time}\n result : {current_time - start_time}")
                     if proc.poll() is not None:
-                        logger.log(f"[SERVER]: process #{proc.pid} terminated with exit code {proc.returncode}", 'info')
+                        logger.log(f"[taskmasterd]: process #{proc.pid} terminated with exit code {proc.returncode}", 'info')
                         if proc.returncode not in jobconf.exitcodes and jobconf.autorestart == "unexpected":
                             should_restart = (current_time - start_time) < jobconf.starttime or retries < jobconf.startretries
                             if should_restart:
-                                logger.log(f"[SERVER]: restarting process #{proc.pid}. Attempt {retries + 1} | start time : {current_time - start_time}s", 'info')
+                                logger.log(f"[taskmasterd]: restarting process #{proc.pid}. Attempt {retries + 1} | start time : {current_time - start_time}s", 'info')
                                 new_process = subprocess.Popen(jobconf.cmd.split(), text=True, preexec_fn=initchild, env=child_env)
                                 new_procs.append((new_process, retries + 1, time.time()))
                                 cpids.append(new_process.pid)
                             else:
-                                logger.log(f"[SERVER]: process #{proc.pid} has exceeded the maximum retry | start time : {current_time - start_time}s", 'info')
+                                logger.log(f"[taskmasterd]: process #{proc.pid} has exceeded the maximum retry | start time : {current_time - start_time}s", 'info')
                         elif jobconf.autorestart is True and retries < jobconf.startretries:
                             new_process = subprocess.Popen(jobconf.cmd.split(), text=True, preexec_fn=initchild, env=child_env)
                             new_procs.append((new_process, retries + 1, time.time()))
@@ -103,7 +103,7 @@ def job_task(jobconf, queue_out):
                 if not procs:
                     break
         except OSError as e:
-            logger.log(f'[SERVER]: unexpected error occurred in function [ job_task ] : {e} ', 'error')
+            logger.log(f'[taskmasterd]: unexpected error occurred in function [ job_task ] : {e} ', 'error')
 
 def monitor_processes(procs, queue_out):
     while True:
@@ -112,7 +112,7 @@ def monitor_processes(procs, queue_out):
        # logger.log(f'Queue Results: {queue_value} ')
         for p in procs:
             if not p.is_alive():
-                logger.log(f"[SERVER]: process #{p.pid} terminated.", 'info')
+                logger.log(f"[taskmasterd]: process #{p.pid} terminated.", 'info')
                 if p.pid in list(queue_value.keys()):
                     for cpid in queue_value[p.pid]:
                         try:
@@ -120,9 +120,9 @@ def monitor_processes(procs, queue_out):
                             if proc_exist is None:
                                 os.kill(cpid ,signal.SIGTERM)
                                 time.sleep(0.1)
-                                logger.log(f"[SERVER]: child process #{cpid} terminated by TERM signal.", 'info')
+                                logger.log(f"[taskmasterd]: child process #{cpid} terminated by TERM signal.", 'info')
                         except:
-                            logger.log(f"[SERVER]: child process #{cpid} does not exit.", 'info')
+                            logger.log(f"[taskmasterd]: child process #{cpid} does not exit.", 'info')
                 procs.remove(p)
                 queue_value.pop(p.pid, None)
         if not procs:
@@ -158,7 +158,6 @@ def add_conf():
     global total_jobs
 
     fileconf_path = '/tmp/conf.yml'
-
     with open(fileconf_path, 'r') as file:
         yaml_content = yaml.safe_load(file)
         for jobname, conf in yaml_content.items():
@@ -180,19 +179,19 @@ def stop_task(jobs_name):
                     stop_sig = total_jobs[jobname].stopsignal
                     stop_time = total_jobs[jobname].stoptime
                     pid = job_process.pid
-                    logger.log(f'[SERVER]: job : {jobname} is already alive : Terminating ...', 'info')
+                    logger.log(f'[taskmasterd]: job : {jobname} is already alive : Terminating ...', 'info')
                     os.kill(pid, stop_signals[stop_sig])
                     time.sleep(stop_time)
                     if job_process.is_alive():
                         os.kill(pid, signal.SIGKILL)
                         time.sleep(0.2)
-                        logger.log(f'[SERVER]: job {jobname} with PID #{pid} could not be stopped by {stop_sig} signal and had terminated by SIGKILL', 'info')
+                        logger.log(f'[taskmasterd]: job {jobname} with PID #{pid} could not be stopped by {stop_sig} signal and had terminated by SIGKILL', 'info')
                     else:
-                        logger.log(f'[SERVER]: job "{jobname}" with PID #{pid} was terminated by the {stop_sig} signal.', 'info')
+                        logger.log(f'[taskmasterd]: job "{jobname}" with PID #{pid} was terminated by the {stop_sig} signal.', 'info')
                 else:
-                    logger.log(f'[SERVER]: job {jobname} is NOT alive', 'info')
+                    logger.log(f'[taskmasterd]: job {jobname} is NOT alive', 'info')
             else:
-                logger.log(f'[SERVER]: job "{jobname}" is not found', 'info')
+                logger.log(f'[taskmasterd]: job "{jobname}" is not found', 'info')
 
 def stop_jobs(jobs_name: str):
     stop_thread = threading.Thread(target=stop_task, args=(jobs_name,))
@@ -222,11 +221,21 @@ def parse_jobsname(jobs_name, cmd, clientsocket):
                     to_remove.append(jobname)
             elif jobname not in launched_jobsname and cmd == 'start':
                 to_return.append(jobname)
-        data = {
-            'start': f'job(s) {to_remove} already started.\n',
-            'stop' : f'cannot stop job(s) {to_remove} : non started.\n'
-        }
-        clientsocket.sendall(bytes(data[cmd] , 'utf-8'))
+        response = ""
+        if to_remove:
+            to_remove_response = {
+                'start': f'cannot start job(s) {to_remove} : already started.\n',
+                'stop' : f'cannot stop job(s) {to_remove} : non started.\n'
+            }
+            response += to_remove_response[cmd] 
+        if to_return:
+            to_return_response ={
+                'start': f'The following tasks have been successfully started: {", ".join(to_remove)}.\n',
+                'stop': f'The following tasks have been successfully stopped: {", ".join(to_remove)}.\n',
+            }
+            response += to_return_response[cmd]
+        if response:
+            clientsocket.sendall(bytes(response, 'utf-8'))
         new_jobsname = to_return
     return new_jobsname
 
@@ -245,7 +254,7 @@ def init_jobs(data_received: str, clientsocket):
     global launched
     global total_jobs
     global is_first
-
+   
     jobs_name = []
     try:
         if data_received:
@@ -257,6 +266,6 @@ def init_jobs(data_received: str, clientsocket):
             if jobs_name:
                 exec[cmd](jobs_name=jobs_name)
     except Exception as error:
-        logger.log(f'[SERVER]: unexpected error occurred in function [ init_jobs ] : {error}', 'error')
+        logger.log(f'[taskmasterd]: unexpected error occurred in function [ init_jobs ] : {error}', 'error')
     finally:
         is_first = False

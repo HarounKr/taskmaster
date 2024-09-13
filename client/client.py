@@ -54,9 +54,7 @@ if __name__ == '__main__':
             ready_to_read = clientsocket.nonblocking()
             if ready_to_read:
                 data = clientsocket.receive_data()
-                logger.log(data[0:len(data) - 1], 'error')
+                print(data[0:len(data) - 1])
         except KeyboardInterrupt:
             break
     clientsocket.socket.close()
-
-    # start nginx vogsphere docker-compose redis
