@@ -3,9 +3,9 @@ try:
     import os, sys, yaml
     from time import sleep
     from modules.daemonizer import Daemonizer
-    from modules.logger_handler import LoggerHandler
+    from modules.logger_config import logger
     from modules.my_socket import MySocket
-    import socket, select
+    import socket
     from jobs import init_jobs
 except ImportError as e:
     raise ImportError(f"Module import failed: {e}")
@@ -28,40 +28,31 @@ def recv_data(clientsocket):
     return data_received[0:len(data_received) - 1]
 
 if __name__ == '__main__':
-    logger = LoggerHandler(actual_path('/logs/logs.file'))
+    
     # Daemon = Daemonizer()
     serversocket = MySocket(socket.gethostname(), 4442, 'server')
-    # init_jobs(None)
     try:
         while True:
             data_received: str = ""
             try:
                 clientsocket, address = serversocket.socket.accept()
-                logger.log(f'Connection from {address} has been established!', 'info')
-                data = "Welcome to the server!\n"
-                clientsocket.sendall(bytes(data, "utf-8"))
+                logger.log(f'[SERVER]: connection from {address} has been established!', 'info')
+                clientsocket.sendall(bytes("Welcome\n!", "utf-8"))
                 while True:
                     data_received = recv_data(clientsocket=clientsocket)
                     if not data_received:
                         break
-                    if data_received == 'start toto':
-                        clientsocket.sendall(bytes(data, 'utf-8'))
-                        print(clientsocket.fileno())
-                    init_jobs(data_received=data_received, clientsocket=clientsocket)
+                    if data_received:
+                        init_jobs(data_received=data_received, clientsocket=clientsocket)
                 clientsocket.close()
             except OSError as e:
-                logger.log(str(e), 'error')
+                logger.log(f'[SERVER]: unexpected error occurred in function [ main ]', 'error')
             except TypeError as e:
-                print(e)
+                logger.log(f'[SERVER]: unexpected error occurred in function [ main ]', 'error')
             except KeyboardInterrupt:
                 break
     except Exception as err:
-        logger.log(err, 'error')
+        logger.log(f'[SERVER]: unexpected error occurred in function [ main ] {err} ', 'error')
     finally:
         serversocket.socket.close()
-        logger.log("Server shutdown", 'info')
-    # process = Process(target=worker, daemon=True)
-    # process.start()
-    # process.join()
-    # jobs = dict()
-   
+        logger.log("[SERVER]: server shutdown", 'info')

@@ -1,27 +1,13 @@
 try:
-    import sys
+    import sys, os, readline, socket
     import readline
-    import yaml
     import socket
-    import select
     from pathlib import Path
     from modules.completer import Completer
     from modules.my_socket import MySocket
-    from modules.logger_handler import LoggerHandler
+    from modules.logger_config import logger
 except ImportError as e:
     raise ImportError(f"Module import failed: {e}")
-
-def start():
-    print('start')
-
-def stop():
-    print('stop')
-
-def get_server_pid():
-    print('pid')
-
-def reload():
-    print('reload')
 
 def print_errors(line:str) -> int:
     print(f'*** Unknown syntax: {line}')
@@ -56,8 +42,6 @@ if __name__ == '__main__':
     auto_completion()
     clientsocket = MySocket(socket.gethostname(), 4442, 'client')
     msg = clientsocket.receive_data()
-    logger = LoggerHandler(actual_path('/logs/logs.file'))
-    print(clientsocket.socket.fileno())
     while True:
         try:
             line = input("taskmaster> ")
@@ -68,10 +52,8 @@ if __name__ == '__main__':
             elif ret == -1:
                 break
             ready_to_read = clientsocket.nonblocking()
-            print(ready_to_read)
             if ready_to_read:
                 data = clientsocket.receive_data()
-                print(data)
                 logger.log(data[0:len(data) - 1], 'error')
         except KeyboardInterrupt:
             break

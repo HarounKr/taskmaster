@@ -20,16 +20,6 @@ class JobConf:
                     self.env[sub_key] = sub_value
             else:
                 setattr(self, key, value)
-
-    # @property
-    # def pid(self):
-    #     return self._pid
-    
-    # @pid.setter
-    # def pid(self, value):
-    #     if value < 0:
-    #         raise ValueError("PID cannot be negative")
-    #     self._pid = value
         
     @property
     def getValues(self):
