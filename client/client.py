@@ -1,8 +1,9 @@
 try:
-    import sys, os, readline, socket
+    import readline, socket
     import readline
     import socket
     from pathlib import Path
+    from modules.privilege_deescalation import priv_deescalation
     from modules.completer import Completer
     from modules.my_socket import MySocket
     from modules.logger_config import logger
@@ -39,6 +40,7 @@ def handle_line(line: str) -> int:
     return 0
 
 if __name__ == '__main__':
+    priv_deescalation(proc='taskmasterctl')
     auto_completion()
     clientsocket = MySocket(socket.gethostname(), 4442, 'client')
     msg = clientsocket.receive_data()

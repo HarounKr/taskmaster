@@ -1,12 +1,11 @@
 try:
-    import socket, os, sys
+    import socket
     from pathlib import Path
-    from time import sleep
+    from modules.privilege_deescalation import priv_deescalation
     from modules.daemonizer import Daemonizer
     from modules.logger_config import logger
     from modules.my_socket import MySocket
     from jobs import init_jobs
-    import sys
 
 except ImportError as e:
     raise ImportError(f"Module import failed: {e}")
@@ -27,7 +26,7 @@ def recv_data(clientsocket):
     return data_received[0:len(data_received) - 1]
 
 if __name__ == '__main__':
-
+    priv_deescalation(proc='taskmasterd')
     # Daemon = Daemonizer()
     serversocket = MySocket(socket.gethostname(), 4442, 'server')
     try:
