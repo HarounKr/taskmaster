@@ -3,7 +3,7 @@ import pwd, os, getpass, sys
 def priv_deescalation(proc: str):
     try:
         actual_uid = os.getuid()
-        if actual_uid is 0:
+        if actual_uid == 0:
             user = getpass.getuser()
             useruid = pwd.getpwnam(user).pw_uid
             os.setuid(useruid)
