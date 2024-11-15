@@ -16,4 +16,3 @@ if __name__ == '__main__':
     p = Process(target=f, args=(lock, num))
     p.start()
     p.join()
-    print('ca ressort')

@@ -111,7 +111,7 @@ ls:
 
 ping:
   cmd: "/usr/bin/ping 8.8.8.8"
-  numprocs: 3
+  numprocs: 1
   umask: 077
   workingdir: /home
   autostart: true
@@ -159,12 +159,32 @@ sleep:
   exitcodes:
     - 0
     - 2
-  startretries: 3
+  startretries: 1
   starttime: 5
   stopsignal: TERM
   stoptime: 10
   stdout: /tmp/sleep.stdout
   stderr: /tmp/sleep.stderr
+  env:
+    STARTED_BY: taskmaster
+    ANSWER: 42
+
+date:
+  cmd: "/usr/bin/python3 /home/hkrifa/Bureau/taskmaster/date.py"
+  numprocs: 1
+  umask: 077
+  workingdir: /home
+  autostart: true
+  autorestart: unexpected
+  exitcodes:
+    - 0
+    - 2
+  startretries: 1
+  starttime: 5
+  stopsignal: TERM
+  stoptime: 10
+  stdout: /tmp/date.stdout
+  stderr: /tmp/date.stderr
   env:
     STARTED_BY: taskmaster
     ANSWER: 42
