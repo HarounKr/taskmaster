@@ -15,7 +15,7 @@ def stop_task(jobs_name):
             'HUP': signal.SIGHUP
         }
         for jobname in jobs_name:
-            if jobname in list(launched.keys()):
+            if jobname in launched:
                 job_process = launched[jobname]
                 if job_process.is_alive():
                     stop_sig = total_jobs[jobname].stopsignal

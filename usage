@@ -1,4 +1,7 @@
-echo echo PYTHONPATH="/home/user/Desktop/taskmaster:$PYTHONPATH" >> ~/.bashrc
+export PYTHONPATH="/home/$(whoami)/Bureau/taskmaster/srcs"  >> ~/.bashrc
 source ~/.bashrc
 python3 -m venv /home/user/Desktop/taskmaster/environment/venv
 source /home/user/Desktop/taskmaster/environment/venv/bin/activate
+cp srcs/conf/conf.yml /tmp
+python3 -B srcs/server/server.py
+python3 -B srcs/client/client.py

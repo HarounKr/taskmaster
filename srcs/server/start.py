@@ -1,8 +1,8 @@
 try:
-    import subprocess, os, threading, time, signal, sys
+    import subprocess, os, threading, time, signal, sys, jobs
     from modules.logger_config import logger
     from multiprocessing import Process, Queue
-    import jobs
+    from signals import sig_handler
 except ImportError as e:
     raise ImportError(f"[taskmasterd]: Module import failed: {e}")
 
@@ -13,6 +13,7 @@ queue_value = {}
 reloaded = False
 procs: list = []
 launched: dict = {}
+monitor_thread = None
 
 def start_procs(numprocs: int, initchild, cmd, env:None) -> list:
     procs = []
@@ -21,34 +22,6 @@ def start_procs(numprocs: int, initchild, cmd, env:None) -> list:
         process = subprocess.Popen(cmd.split(), text=True, preexec_fn=initchild, env=env)
         procs.append((process, 0, start_time))
     return procs
-
-def sig_handler(procs, jobname, queue_sighub):
-    def kill_childs(signum, frame):
-        logger.log(f"[taskmasterd]: received signal {signum}. Terminating child processes...", 'info')
-        for proc, _, _ in procs:
-            if proc.poll() is None:
-                proc.terminate()
-                try:
-                    proc.wait(timeout=5)
-                except subprocess.TimeoutExpired:
-                    proc.kill()
-                finally:
-                    logger.log(f'[taskmasterd]: process #{proc.pid} terminated', 'info')
-        sys.exit(0)
-    
-    def handle_sighup(signum, frame):
-        pid = os.getpid()
-        print(f'{jobname} : {pid}')
-        logger.log(f"[taskmasterd]: job {jobname} with pid #{pid} received SIGHUP - reloading configuration..", 'info')
-        queue_sighub.put(jobname)
-        #load_conf()
-        #stop_jobs([jobname])
-        #start_jobs([jobname])
-
-    signal.signal(signal.SIGHUP, handle_sighup)
-    signals = [signal.SIGTERM, signal.SIGINT, signal.SIGQUIT, signal.SIGABRT, signal.SIGFPE, signal.SIGSEGV]
-    for sig in signals:
-        signal.signal(sig, kill_childs)
 
 def job_task(jobconf, queue_out, queue_sighub):
     procs = []
@@ -149,17 +122,22 @@ def monitor_processes(procs, queue_out, queue_sighub):
 def start_jobs(jobs_name):
     global procs
     global launched
-   
+    global monitor_thread
     logger.log(f"[taskmasterd]: start job(s) {jobs_name}", 'info')
+
+    print('monitor_thread: ', monitor_thread)
     for name in jobs_name:
         p = Process(target=job_task, args=(jobs.total_jobs[name], queue_out, queue_sighub))
         procs.append(p)
         p.start()
         launched[name] = p
         time.sleep(0.01)
-    
-    if not reloaded:
+
+    if monitor_thread is None:
+        print(' ça rentre là dedans ')
         monitor_thread = threading.Thread(target=monitor_processes, args=(procs, queue_out, queue_sighub))
         monitor_thread.start()
+    else:
+        print('le thread est bon')
     if to_reload:
         print('to reload : ', to_reload)

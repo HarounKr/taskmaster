@@ -9,7 +9,6 @@ try:
 
 except ImportError as e:
     raise ImportError(f"Module import failed: {e}")
-# env PYTHONPATH="/home/hkrifa/Desktop/taskmaster:$PYTHONPATH"
 def actual_path(path: str) -> str:
     actual_path = str(Path().resolve())
     return actual_path[0:actual_path.rfind('/')] + path
@@ -27,7 +26,7 @@ def recv_data(clientsocket):
 
 if __name__ == '__main__':
     priv_deescalation(proc='taskmasterd')
-    # Daemon = Daemonizer()
+   # Daemon = Daemonizer()
     serversocket = MySocket(socket.gethostname(), 4442, 'server')
     try:
         while True:

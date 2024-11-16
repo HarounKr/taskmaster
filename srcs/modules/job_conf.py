@@ -20,7 +20,7 @@ class JobConf:
                     self.env[sub_key] = sub_value
             else:
                 setattr(self, key, value)
-        
+    
     @property
     def getValues(self):
         return self.__dict__

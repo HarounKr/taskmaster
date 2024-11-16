@@ -3,6 +3,7 @@ try:
     from modules.logger_config import logger
     from modules.job_conf import JobConf
     from start import start_jobs
+    from stop import stop_jobs
     import start
 except ImportError as e:
     raise ImportError(f"[taskmasterd]: Module import failed: {e}")
@@ -46,7 +47,7 @@ def parse_jobsname(jobs_name, cmd, clientsocket):
         return new_jobsname
     
     jobs_targets = []
-    to_remove = [] 
+    to_remove = []
     new_jobsname = check_duplicate(jobs_name=jobs_name)
     launched_jobsname = list(launched.keys())
     if launched:
@@ -65,20 +66,31 @@ def parse_jobsname(jobs_name, cmd, clientsocket):
                 'stop' : f'cannot stop job(s) {to_remove} : non started.\n'
             }
             response += to_remove_response[cmd]
-        if jobs_targets:
-            to_return_response ={
-                'start': f'The following task(s) have been successfully started: {", ".join(jobs_targets)}.\n',
-                'stop': f'The following task(s) have been successfully stopped: {", ".join(jobs_targets)}.\n',
-            }
-            response += to_return_response[cmd]
-        if response:
-            clientsocket.sendall(bytes(response, 'utf-8'))
+       
         new_jobsname = jobs_targets
     return new_jobsname
 
 def restart_jobs(jobs_name):
     stop_jobs(jobs_name=jobs_name)
     start_jobs(jobs_name=jobs_name)
+
+def handle_rpl(cmd, launched, clientsocket, jobs_name):
+    started = []
+    stopped = []
+
+    if launched:
+        for jobname in jobs_name:
+            if launched[jobname].is_alive():
+                started.append(jobname)
+            else:
+                stopped.append(jobname) 
+        to_return_response = {
+            'start': f'The following task(s) have been successfully started: {", ".join(started)}.\n',
+            'stop': f'The following task(s) have been successfully stopped: {", ".join(stopped)}.\n',
+        }
+        response = to_return_response[cmd]
+        if response:
+            clientsocket.sendall(bytes(response, 'utf-8'))
 
 exec = {
     'start': start_jobs,
@@ -91,7 +103,7 @@ exec = {
 def init_jobs(data_received: str, clientsocket):
     global total_jobs
     global is_first
-   
+    launched = start.launched
     jobs_name = [] 
     try:
         if data_received:
@@ -106,6 +118,7 @@ def init_jobs(data_received: str, clientsocket):
             jobs_name = parse_jobsname(jobs_name=jobs_name, cmd=cmd, clientsocket=clientsocket)
             if jobs_name:
                 exec[cmd](jobs_name=jobs_name)
+            handle_rpl(cmd=cmd, launched=launched, clientsocket=clientsocket, jobs_name=jobs_name)
     except Exception as error:
         logger.log(f'[taskmasterd]: unexpected error occurred in function [ init_jobs ] : {error}', 'error')
     finally:
