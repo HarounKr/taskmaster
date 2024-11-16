@@ -1,94 +1,3 @@
-# nginx:
-#   cmd: "/usr/local/bin/nginx -c /etc/nginx/test.conf"
-#   numprocs: 1
-#   umask: 022
-#   workingdir: /tmp
-#   autostart: true
-#   autorestart: unexpected
-#   exitcodes:
-#     - 0
-#     - 2
-#   startretries: 3
-#   starttime: 5
-#   stopsignal: TERM
-#   stoptime: 10
-#   stdout: /tmp/nginx.stdout
-#   stderr: /tmp/nginx.stderr
-#   env:
-#     STARTED_BY: taskmaster
-#     ANSWER: 42
-
-# vogsphere:
-#   cmd: "/usr/local/bin/vogsphere-worker --no-prefork"
-#   numprocs: 8
-#   umask: 077
-#   workingdir: /tmp
-#   autostart: true
-#   autorestart: unexpected
-#   exitcodes: 0
-#   startretries: 3
-#   starttime: 5
-#   stopsignal: USR1
-#   stoptime: 10
-#   stdout: /
-
-# docker-compose:
-#   cmd: "/usr/local/bin/docker-compose -f /home/project/docker-compose.yml up"
-#   numprocs: 1
-#   umask: 022
-#   workingdir: /home/project/
-#   autostart: true
-#   autorestart: unexpected
-#   exitcodes:
-#     - 0
-#     - 1
-#   startretries: 3
-#   starttime: 10
-#   stopsignal: TERM
-#   stoptime: 30
-#   stdout: /home/project/docker-compose.out
-#   stderr: /home/project/docker-compose.err
-#   env:
-#     COMPOSE_PROJECT_NAME: mycomposeproject
-
-# redis:
-#   cmd: "/usr/bin/redis-server /etc/redis/redis.conf"
-#   numprocs: 1
-#   umask: 022
-#   workingdir: /var/lib/redis
-#   autostart: true
-#   autorestart: unexpected
-#   exitcodes:
-#     - 0
-#   startretries: 3
-#   starttime: 10
-#   stopsignal: TERM
-#   stoptime: 10
-#   stdout: /var/log/redis/redis-server.log
-#   stderr: /var/log/redis/redis-server.err
-#   env:
-#     REDIS_PORT: 6379
-
-# postgresql:
-#   cmd: "/usr/lib/postgresql/12/bin/postgres -D /var/lib/postgresql/12/main -c config_file=/etc/postgresql/12/main/postgresql.conf"
-#   numprocs: 1
-#   umask: 022
-#   workingdir: /var/lib/postgresql/12/main
-#   autostart: true
-#   autorestart: unexpected
-#   exitcodes:
-#     - 0
-#   startretries: 3
-#   starttime: 10
-#   stopsignal: INT
-#   stoptime: 30
-#   stdout: /var/log/postgresql/postgresql-12-main.log
-#   stderr: /var/log/postgresql/postgresql-12-main.err
-#   env:
-#     PGDATA: /var/lib/postgresql/12/main
-#     PGPORT: 5432
-
-
 ls:
   cmd: "/usr/bin/ls"
   numprocs: 1
@@ -130,7 +39,7 @@ ping:
     ANSWER: 42
 
 env:
-  cmd: "/usr/bin/python3 /home/hkrifa/Bureau/taskmaster/print_env.py"
+  cmd: "/usr/bin/python3 /home/hkrifa/Bureau/taskmaster/tests/print_env.py"
   numprocs: 1
   umask: 077
   workingdir: /home
@@ -150,7 +59,7 @@ env:
   #   ANSWER: 42
 
 sleep:
-  cmd: "/usr/bin/python3 /home/hkrifa/Bureau/taskmaster/sleep.py"
+  cmd: "/usr/bin/python3 /home/hkrifa/Bureau/taskmaster/tests/sleep.py"
   numprocs: 1
   umask: 077
   workingdir: /home
@@ -170,7 +79,7 @@ sleep:
     ANSWER: 42
 
 date:
-  cmd: "/usr/bin/python3 /home/hkrifa/Bureau/taskmaster/date.py"
+  cmd: "/usr/bin/python3 /home/hkrifa/Bureau/taskmaster/tests/date.py"
   numprocs: 1
   umask: 077
   workingdir: /home
