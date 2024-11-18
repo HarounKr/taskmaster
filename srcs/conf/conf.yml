@@ -60,7 +60,7 @@ env:
 
 sleep:
   cmd: "/usr/bin/python3 /home/hkrifa/Bureau/taskmaster/tests/sleep.py"
-  numprocs: 1
+  numprocs: 5
   umask: 077
   workingdir: /home
   autostart: true

@@ -18,7 +18,7 @@ def stop_task(jobs_name):
             if jobname in launched:
                 job_process = launched[jobname]
                 if job_process.is_alive():
-                    stop_sig = total_jobs[jobname].stopsignal
+                    stop_sig = total_jobs[jobname].stopsignal.upper()
                     stop_time = total_jobs[jobname].stoptime
                     pid = job_process.pid
                     logger.log(f'[taskmasterd]: job : {jobname} is already alive : Terminating ...', 'info')

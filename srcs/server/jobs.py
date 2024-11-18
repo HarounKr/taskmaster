@@ -1,5 +1,5 @@
 try:
-    import yaml, subprocess, os, threading, time, signal, sys
+    import yaml, os
     from modules.logger_config import logger
     from modules.job_conf import JobConf
     from start import start_jobs
@@ -10,7 +10,6 @@ except ImportError as e:
 
 is_first = True
 total_jobs: dict = {}
-
 
 def load_conf():
     global total_jobs
@@ -99,7 +98,6 @@ exec = {
     'restart' : restart_jobs,
 }
 
-
 def init_jobs(data_received: str, clientsocket):
     global total_jobs
     global is_first
@@ -109,12 +107,9 @@ def init_jobs(data_received: str, clientsocket):
         if data_received:
             jobs_name = data_received.split()
             cmd = jobs_name.pop(0)
+            print('is_first : ', is_first)
             if is_first is True or cmd == 'reload':
-                if cmd == 'reload':
-                    reloaded = True
                 load_conf()
-            elif cmd == 'restart':
-                reloaded = False
             jobs_name = parse_jobsname(jobs_name=jobs_name, cmd=cmd, clientsocket=clientsocket)
             if jobs_name:
                 exec[cmd](jobs_name=jobs_name)

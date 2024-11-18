@@ -9,6 +9,7 @@ try:
 
 except ImportError as e:
     raise ImportError(f"Module import failed: {e}")
+
 def actual_path(path: str) -> str:
     actual_path = str(Path().resolve())
     return actual_path[0:actual_path.rfind('/')] + path

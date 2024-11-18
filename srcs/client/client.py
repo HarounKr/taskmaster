@@ -14,7 +14,7 @@ def print_errors(line:str) -> int:
     print(f'*** Unknown syntax: {line}')
     return 1
 
-cmds_list = ['start', 'stop', 'pid', 'exit', 'quit', 'reload' ]
+cmds_list = ['start', 'stop', 'restart', 'reload' ]
 
 def actual_path(path: str) -> str:
     actual_path = str(Path().resolve())

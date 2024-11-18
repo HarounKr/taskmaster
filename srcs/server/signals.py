@@ -4,8 +4,6 @@ try:
 except ImportError as e:
     raise ImportError(f"[taskmasterd]: Module import failed: {e}")
 
-
-
 def sig_handler(procs, jobname, queue_sighub):
     def kill_childs(signum, frame):
         logger.log(f"[taskmasterd]: received signal {signum}. Terminating child processes...", 'info')
