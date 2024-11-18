@@ -20,7 +20,7 @@ ls:
 
 ping:
   cmd: "/usr/bin/ping 8.8.8.8"
-  numprocs: 1
+  numprocs: 6
   umask: 077
   workingdir: /home
   autostart: true
@@ -30,7 +30,7 @@ ping:
     - 2
   startretries: 2
   starttime: 2
-  stopsignal: TERM
+  stopsignal: HUP
   stoptime: 10
   stdout: /tmp/ping.stdout
   stderr: /tmp/ping.stderr
@@ -60,7 +60,7 @@ env:
 
 sleep:
   cmd: "/usr/bin/python3 /home/hkrifa/Bureau/taskmaster/tests/sleep.py"
-  numprocs: 5
+  numprocs: 2
   umask: 077
   workingdir: /home
   autostart: true
@@ -70,7 +70,7 @@ sleep:
     - 2
   startretries: 1
   starttime: 5
-  stopsignal: TERM
+  stopsignal: HUP
   stoptime: 10
   stdout: /tmp/sleep.stdout
   stderr: /tmp/sleep.stderr

@@ -73,20 +73,17 @@ def job_task(jobconf, queue_out, queue_sighub):
                                     logger.log(f"[taskmasterd]: restarting process #{proc.pid}. Attempt {retries + 1} | start time : {current_time - start_time}s", 'info')
                                     new_process = subprocess.Popen(jobconf.cmd.split(), text=True, preexec_fn=initchild, env=child_env)
                                     new_procs.append((new_process, retries + 1, time.time()))
-                                    if proc.pid in child_pids:
-                                        child_pids = list(map(lambda x: x.replace(proc.pid, new_procs.pid), child_pids))
-                                    else:
-                                        child_pids.append(new_process.pid)
+                                    child_pids.append(new_process.pid)
+                                    child_pids.pop(child_pids.index(proc.pid))
                                 else:
                                     logger.log(f"[taskmasterd]: process #{proc.pid} has exceeded the maximum retry | start time : {current_time - start_time}s", 'info')
                             elif jobconf.autorestart is True and retries < jobconf.startretries:
                                 new_process = subprocess.Popen(jobconf.cmd.split(), text=True, preexec_fn=initchild, env=child_env)
                                 new_procs.append((new_process, retries + 1, time.time()))
-                                if proc.pid in child_pids:
-                                    child_pids = list(map(lambda x: x.replace(proc.pid, new_procs.pid), child_pids))
-                                else:
-                                    child_pids.append(new_process.pid)
+                                child_pids.append(new_process.pid)
+                                child_pids.pop(child_pids.index(proc.pid))
                             total_pids[job_pid] = child_pids
+                            print(child_pids)
                             queue_out.put(total_pids)
                         else:
                             new_procs.append((proc, retries, start_time))
@@ -103,19 +100,17 @@ def monitor_processes(procs, queue_out, queue_sighub):
     while True:
         while not queue_out.empty():
             queue_jobpids.update(queue_out.get())
-        print('queue_jobpids: ', queue_jobpids)
         while not queue_sighub.empty():
             jobname = queue_sighub.get()
-            print(f'jobname: {jobname} ')
             if isinstance(jobname, str):
                 to_reload.append(jobname)
-        print('queue_sighub: ', to_reload)
-        
+
         if to_reload:
-            stop_jobs(jobs_name=to_reload)
+            stop_jobs(jobs_name=to_reload, is_hup=True)
             jobs.load_conf()
             start_jobs(jobs_name=to_reload)
-            to_reload = [] 
+            to_reload = []
+
         for process in procs[:]:
             if not process.is_alive():
                 logger.log(f"[taskmasterd]: process #{process.pid} terminated.", 'info')
@@ -133,7 +128,7 @@ def monitor_processes(procs, queue_out, queue_sighub):
                     procs.remove(process)
                     queue_jobpids.pop(process.pid, None)
                 except ValueError as e:
-                    logger.log(f"[taskmasterd]: Error removing process #{p.pid}: {e}", 'error')
+                    logger.log(f"[taskmasterd]: Error removing process #{process.pid}: {e}", 'error')
         time.sleep(1)
 
 def start_jobs(jobs_name):

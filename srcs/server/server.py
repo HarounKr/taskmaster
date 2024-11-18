@@ -1,14 +1,16 @@
 try:
-    import socket
+    import socket, start
     from pathlib import Path
     from modules.privilege_deescalation import priv_deescalation
     from modules.daemonizer import Daemonizer
     from modules.logger_config import logger
     from modules.my_socket import MySocket
-    from jobs import init_jobs
+    from jobs import init_jobs, load_conf
 
 except ImportError as e:
     raise ImportError(f"Module import failed: {e}")
+
+is_first = True
 
 def actual_path(path: str) -> str:
     actual_path = str(Path().resolve())
@@ -36,6 +38,9 @@ if __name__ == '__main__':
                 clientsocket, address = serversocket.socket.accept()
                 logger.log(f'[taskmasterd]: connection from {address} has been established!', 'info')
                 clientsocket.sendall(bytes("Welcome\n!", "utf-8"))
+                if is_first is True:
+                    load_conf()
+                    
                 while True:
                     data_received = recv_data(clientsocket=clientsocket)
                     if not data_received:

@@ -2,19 +2,20 @@ try:
     import yaml, os
     from modules.logger_config import logger
     from modules.job_conf import JobConf
+    import server
     from start import start_jobs
     from stop import stop_jobs
     import start
 except ImportError as e:
     raise ImportError(f"[taskmasterd]: Module import failed: {e}")
 
-is_first = True
 total_jobs: dict = {}
 
 def load_conf():
     global total_jobs
 
     fileconf_path = '/tmp/conf.yml'
+    print('ça va dans load_conf')
     with open(fileconf_path, 'r') as file:
         yaml_content = yaml.safe_load(file)
         for jobname, conf in yaml_content.items():
@@ -37,7 +38,7 @@ def jobs_filtering(jobs_name):
 
 def parse_jobsname(jobs_name, cmd, clientsocket):
     launched = start.launched
-
+    print(jobs_name)
     def check_duplicate(jobs_name):
         new_jobsname = []
         for item in jobs_name:
@@ -65,12 +66,13 @@ def parse_jobsname(jobs_name, cmd, clientsocket):
                 'stop' : f'cannot stop job(s) {to_remove} : non started.\n'
             }
             response += to_remove_response[cmd]
-       
+        if response:
+            clientsocket.sendall(bytes(response, 'utf-8'))
         new_jobsname = jobs_targets
     return new_jobsname
 
-def restart_jobs(jobs_name):
-    stop_jobs(jobs_name=jobs_name)
+def restart_jobs(jobs_name, is_hup:False):
+    stop_jobs(jobs_name=jobs_name, is_hup=is_hup)
     start_jobs(jobs_name=jobs_name)
 
 def handle_rpl(cmd, launched, clientsocket, jobs_name):
@@ -92,15 +94,14 @@ def handle_rpl(cmd, launched, clientsocket, jobs_name):
             clientsocket.sendall(bytes(response, 'utf-8'))
 
 exec = {
-    'start': start_jobs,
-    'stop': stop_jobs,
-    'reload': restart_jobs,
-    'restart' : restart_jobs,
+    'start': lambda jobs_name: start_jobs(jobs_name=jobs_name),
+    'stop': lambda jobs_name: stop_jobs(jobs_name=jobs_name, is_hup=False),
+    'restart': lambda jobs_name: restart_jobs(jobs_name=jobs_name, is_hup=False),
 }
 
 def init_jobs(data_received: str, clientsocket):
     global total_jobs
-    global is_first
+    is_first = server.is_first
     launched = start.launched
     jobs_name = [] 
     try:
@@ -108,12 +109,13 @@ def init_jobs(data_received: str, clientsocket):
             jobs_name = data_received.split()
             cmd = jobs_name.pop(0)
             print('is_first : ', is_first)
-            if is_first is True or cmd == 'reload':
+            if cmd == 'reload':
                 load_conf()
-            jobs_name = parse_jobsname(jobs_name=jobs_name, cmd=cmd, clientsocket=clientsocket)
-            if jobs_name:
-                exec[cmd](jobs_name=jobs_name)
-            handle_rpl(cmd=cmd, launched=launched, clientsocket=clientsocket, jobs_name=jobs_name)
+            if cmd != 'reload':
+                jobs_name = parse_jobsname(jobs_name=jobs_name, cmd=cmd, clientsocket=clientsocket)
+                if jobs_name:
+                    exec[cmd](jobs_name=jobs_name)
+                handle_rpl(cmd=cmd, launched=launched, clientsocket=clientsocket, jobs_name=jobs_name)
     except Exception as error:
         logger.log(f'[taskmasterd]: unexpected error occurred in function [ init_jobs ] : {error}', 'error')
     finally:
