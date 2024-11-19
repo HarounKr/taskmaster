@@ -1,10 +1,8 @@
 try:
-    import yaml, os
+    import yaml, os, start, stop
     from modules.logger_config import logger
     from modules.job_conf import JobConf
     import server
-    from start import start_jobs
-    from stop import stop_jobs
     import start
 except ImportError as e:
     raise ImportError(f"[taskmasterd]: Module import failed: {e}")
@@ -72,8 +70,8 @@ def parse_jobsname(jobs_name, cmd, clientsocket):
     return new_jobsname
 
 def restart_jobs(jobs_name, is_hup:False):
-    stop_jobs(jobs_name=jobs_name, is_hup=is_hup)
-    start_jobs(jobs_name=jobs_name)
+    stop.stop_jobs(jobs_name=jobs_name, is_hup=is_hup)
+    start.start_jobs(jobs_name=jobs_name)
 
 def handle_rpl(cmd, launched, clientsocket, jobs_name):
     started = []
@@ -94,8 +92,8 @@ def handle_rpl(cmd, launched, clientsocket, jobs_name):
             clientsocket.sendall(bytes(response, 'utf-8'))
 
 exec = {
-    'start': lambda jobs_name: start_jobs(jobs_name=jobs_name),
-    'stop': lambda jobs_name: stop_jobs(jobs_name=jobs_name, is_hup=False),
+    'start': lambda jobs_name: start.start_jobs(jobs_name=jobs_name),
+    'stop': lambda jobs_name: stop.stop_jobs(jobs_name=jobs_name, is_hup=False),
     'restart': lambda jobs_name: restart_jobs(jobs_name=jobs_name, is_hup=False),
 }
 

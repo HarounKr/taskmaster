@@ -1,11 +1,10 @@
 try:
-    import socket, start
+    import socket, jobs
     from pathlib import Path
     from modules.privilege_deescalation import priv_deescalation
     from modules.daemonizer import Daemonizer
     from modules.logger_config import logger
     from modules.my_socket import MySocket
-    from jobs import init_jobs, load_conf
 
 except ImportError as e:
     raise ImportError(f"Module import failed: {e}")
@@ -39,14 +38,14 @@ if __name__ == '__main__':
                 logger.log(f'[taskmasterd]: connection from {address} has been established!', 'info')
                 clientsocket.sendall(bytes("Welcome\n!", "utf-8"))
                 if is_first is True:
-                    load_conf()
+                    jobs.load_conf()
                     
                 while True:
                     data_received = recv_data(clientsocket=clientsocket)
                     if not data_received:
                         break
                     if data_received:
-                        init_jobs(data_received=data_received, clientsocket=clientsocket)
+                        jobs.init_jobs(data_received=data_received, clientsocket=clientsocket)
                 clientsocket.close()
             except OSError as e:
                 logger.log(f'[taskmasterd]: unexpected error occurred in function [ main ]', 'error')
