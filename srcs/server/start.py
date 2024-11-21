@@ -26,7 +26,6 @@ def start_procs(numprocs: int, initchild, cmd, env:None) -> list:
 
 def job_task(jobconf, queue_out, queue_sighub):
     child_procs = []
-
     if hasattr(jobconf, 'cmd') and jobconf.cmd:
         child_env = None
         if hasattr(jobconf, 'env') and jobconf.env:
@@ -47,6 +46,8 @@ def job_task(jobconf, queue_out, queue_sighub):
                 os.dup2(stderr_fd, 2)
                 os.close(stderr_fd)        
         try:
+            print('start time : ', jobconf.starttime)
+            time.sleep(jobconf.starttime)
             child_procs = start_procs(numprocs=jobconf.numprocs, initchild=initchild, cmd=jobconf.cmd, env=child_env)
             if child_procs:
                 sig_handler(procs=child_procs, jobname=jobconf.name, queue_sighub=queue_sighub)

@@ -20,26 +20,6 @@ ls:
 
 ping:
   cmd: "/usr/bin/ping 8.8.8.8"
-  numprocs: 6
-  umask: 077
-  workingdir: /home
-  autostart: true
-  autorestart: unexpected
-  exitcodes:
-    - 0
-    - 2
-  startretries: 2
-  starttime: 2
-  stopsignal: HUP
-  stoptime: 10
-  stdout: /tmp/ping.stdout
-  stderr: /tmp/ping.stderr
-  env:
-    STARTED_BY: taskmaster
-    ANSWER: 42
-
-env:
-  cmd: "/usr/bin/python3 /home/hkrifa/Desktop/taskmaster/tests/print_env.py"
   numprocs: 1
   umask: 077
   workingdir: /home
@@ -54,13 +34,33 @@ env:
   stoptime: 10
   stdout: /tmp/ping.stdout
   stderr: /tmp/ping.stderr
+  env:
+    STARTED_BY: taskmaster
+    ANSWER: 42
+
+env:
+  cmd: "/usr/bin/python3 /home/hkrifa/Bureau/taskmaster/tests/print_env.py"
+  numprocs: 3
+  umask: 077
+  workingdir: /home
+  autostart: true
+  autorestart: unexpected
+  exitcodes:
+    - 0
+    - 2
+  startretries: 2
+  starttime: 10
+  stopsignal: TERM
+  stoptime: 10
+  stdout: /tmp/env.stdout
+  stderr: /tmp/env.stderr
   # env:
   #   STARTED_BY: taskmaster
   #   ANSWER: 42
 
 sleep:
-  cmd: "/usr/bin/python3 /home/hkrifa/Desktop/taskmaster/tests/sleep.py"
-  numprocs: 2
+  cmd: "/usr/bin/python3 /home/hkrifa/Bureau/taskmaster/tests/sleep.py"
+  numprocs: 1
   umask: 077
   workingdir: /home
   autostart: true
@@ -69,7 +69,7 @@ sleep:
     - 0
     - 2
   startretries: 1
-  starttime: 5
+  starttime: 10
   stopsignal: TERM
   stoptime: 10
   stdout: /tmp/sleep.stdout
@@ -79,7 +79,7 @@ sleep:
     ANSWER: 42
 
 date:
-  cmd: "/usr/bin/python3 /home/hkrifa/Desktop/taskmaster/tests/date.py"
+  cmd: "/usr/bin/python3 /home/hkrifa/Bureau/taskmaster/tests/date.py"
   numprocs: 1
   umask: 077
   workingdir: /home
@@ -90,7 +90,7 @@ date:
     - 2
   startretries: 1
   starttime: 5
-  stopsignal: TERM
+  stopsignal: HUP
   stoptime: 10
   stdout: /tmp/date.stdout
   stderr: /tmp/date.stderr

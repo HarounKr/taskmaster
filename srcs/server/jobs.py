@@ -1,9 +1,7 @@
 try:
-    import yaml, os, start, stop
+    import yaml, os, start, stop, time, server
     from modules.logger_config import logger
     from modules.job_conf import JobConf
-    import server
-    import start
 except ImportError as e:
     raise ImportError(f"[taskmasterd]: Module import failed: {e}")
 
@@ -76,6 +74,15 @@ def handle_rpl(cmd, clientsocket, jobs_name):
     started = []
     stopped = []
 
+    if cmd == 'start':
+        maximum_starttime = 0
+        for jobname in jobs_name:
+            if start.launched[jobname].is_alive():
+                starttime = total_jobs[jobname].starttime
+                if starttime > maximum_starttime:
+                    maximum_starttime = starttime + 1
+        print('maximum_starttime : ', maximum_starttime)
+        time.sleep(maximum_starttime)
     if start.launched:
         for jobname in jobs_name:
             if start.launched[jobname].is_alive():

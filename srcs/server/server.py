@@ -28,7 +28,7 @@ def recv_data(clientsocket):
 
 if __name__ == '__main__':
     priv_deescalation(proc='taskmasterd')
-   # Daemon = Daemonizer()
+    Daemon = Daemonizer()
     serversocket = MySocket(socket.gethostname(), 4442, 'server')
     try:
         while True:

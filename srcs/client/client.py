@@ -13,15 +13,7 @@ except ImportError as e:
 MAGENTA = "\033[95m"
 RESET = "\033[0m"
 
-def print_errors(line:str) -> int:
-    print(f'*** Unknown syntax: {line}')
-    return 1
-
 cmds_list = ['start', 'stop', 'restart', 'reload' ]
-
-def actual_path(path: str) -> str:
-    actual_path = str(Path().resolve())
-    return actual_path[0:actual_path.rfind('/')] + path
 
 def auto_completion():
     readline.parse_and_bind('tab: complete')
@@ -48,6 +40,7 @@ if __name__ == '__main__':
             ret = handle_line(line=line)
             if ret == 0:
                 clientsocket.send_data(data=line)
+                print('Request send to Daemon, waiting ..')
             elif ret == -1:
                 break
             #ready_to_read = clientsocket.nonblocking()
