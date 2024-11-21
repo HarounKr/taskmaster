@@ -1,5 +1,5 @@
 ls:
-  cmd: "/usr/bin/ls"
+  cmd: "/usr/bin/"
   numprocs: 1
   umask: 022
   workingdir: /home
@@ -39,7 +39,7 @@ ping:
     ANSWER: 42
 
 env:
-  cmd: "/usr/bin/python3 /home/hkrifa/Bureau/taskmaster/tests/print_env.py"
+  cmd: "/usr/bin/python3 /home/hkrifa/Desktop/taskmaster/tests/print_env.py"
   numprocs: 1
   umask: 077
   workingdir: /home
@@ -59,7 +59,7 @@ env:
   #   ANSWER: 42
 
 sleep:
-  cmd: "/usr/bin/python3 /home/hkrifa/Bureau/taskmaster/tests/sleep.py"
+  cmd: "/usr/bin/python3 /home/hkrifa/Desktop/taskmaster/tests/sleep.py"
   numprocs: 2
   umask: 077
   workingdir: /home
@@ -70,7 +70,7 @@ sleep:
     - 2
   startretries: 1
   starttime: 5
-  stopsignal: HUP
+  stopsignal: TERM
   stoptime: 10
   stdout: /tmp/sleep.stdout
   stderr: /tmp/sleep.stderr
@@ -79,7 +79,7 @@ sleep:
     ANSWER: 42
 
 date:
-  cmd: "/usr/bin/python3 /home/hkrifa/Bureau/taskmaster/tests/date.py"
+  cmd: "/usr/bin/python3 /home/hkrifa/Desktop/taskmaster/tests/date.py"
   numprocs: 1
   umask: 077
   workingdir: /home

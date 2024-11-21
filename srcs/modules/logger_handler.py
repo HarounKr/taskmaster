@@ -1,6 +1,5 @@
 try:
     import logging
-    from colorama import Fore, Style
 except ImportError as e:
     raise ImportError(f"Module import failed: {e}")
 
@@ -22,16 +21,16 @@ class LoggerHandler:
             console_handler = logging.StreamHandler()
             console_handler.setLevel(logging.DEBUG)
             
-            # Formatter personnalisé pour info et error
             class ColoredFormatter(logging.Formatter):
                 COLORS = {
-                    'INFO': Fore.GREEN + Style.BRIGHT,
-                    'ERROR': Fore.RED + Style.BRIGHT,
+                    'INFO': '\033[92m',  # Vert clair
+                    'ERROR': '\033[91m',  # Rouge clair
                 }
+                RESET = '\033[0m'
 
                 def format(self, record):
                     level_color = self.COLORS.get(record.levelname, '')
-                    reset = Style.RESET_ALL
+                    reset = self.RESET
                     record.levelname = f"{level_color}{record.levelname}{reset}"
                     record.msg = f"{level_color}{record.msg}{reset}"
                     return super().format(record)
@@ -41,7 +40,9 @@ class LoggerHandler:
             self.logger.addHandler(console_handler)
     
     def log(self, message: str, level: str):
-        if level == 'info':
+        if level.lower() == 'info':
             self.logger.info(message)
-        elif level == 'error':
+        elif level.lower() == 'error':
             self.logger.error(message)
+        else:
+            raise ValueError(f"Unknown log level: {level}")
