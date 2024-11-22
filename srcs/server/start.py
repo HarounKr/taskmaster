@@ -16,6 +16,8 @@ job_procs: list = []
 launched: dict = {}
 monitoring_thread = None
 
+PR_SET_NAME = 15
+
 def start_procs(numprocs: int, initchild, cmd, env:None) -> list:
     procs = []
     for _ in range(0, numprocs):
@@ -26,6 +28,7 @@ def start_procs(numprocs: int, initchild, cmd, env:None) -> list:
 
 def job_task(jobconf, queue_out, queue_sighub):
     child_procs = []
+
     if hasattr(jobconf, 'cmd') and jobconf.cmd:
         child_env = None
         if hasattr(jobconf, 'env') and jobconf.env:
@@ -46,7 +49,6 @@ def job_task(jobconf, queue_out, queue_sighub):
                 os.dup2(stderr_fd, 2)
                 os.close(stderr_fd)        
         try:
-            print('start time : ', jobconf.starttime)
             time.sleep(jobconf.starttime)
             child_procs = start_procs(numprocs=jobconf.numprocs, initchild=initchild, cmd=jobconf.cmd, env=child_env)
             if child_procs:
@@ -59,7 +61,6 @@ def job_task(jobconf, queue_out, queue_sighub):
                 logger.log(f"[taskmasterd]: job -- {jobconf.name} -- started with pid #{job_pid} and {size} child(s) #{child_pids}", 'info')
                 total_pids = {}
                 total_pids[job_pid] = child_pids
-                print('total_pids : ', total_pids)
                 queue_out.put(total_pids)
                 while True:
                     new_procs = []
@@ -71,20 +72,20 @@ def job_task(jobconf, queue_out, queue_sighub):
                             if proc.returncode not in jobconf.exitcodes and jobconf.autorestart == "unexpected":
                                 should_restart = (current_time - start_time) < jobconf.starttime or retries < jobconf.startretries
                                 if should_restart:
-                                    logger.log(f"[taskmasterd]: restarting process #{proc.pid}. Attempt {retries + 1} | start time : {current_time - start_time}s", 'info')
+                                    logger.log(f"[taskmasterd]: restarting process #{proc.pid}. Attempt {retries + 1}", 'info')
                                     new_process = subprocess.Popen(jobconf.cmd.split(), text=True, preexec_fn=initchild, env=child_env)
                                     new_procs.append((new_process, retries + 1, time.time()))
                                     child_pids.append(new_process.pid)
                                     child_pids.pop(child_pids.index(proc.pid))
                                 else:
-                                    logger.log(f"[taskmasterd]: process #{proc.pid} has exceeded the maximum retry | start time : {current_time - start_time}s", 'info')
-                            elif jobconf.autorestart is True and retries < jobconf.startretries:
+                                    logger.log(f"[taskmasterd]: process #{proc.pid} has exceeded the maximum retry {jobconf.startretries}", 'info')
+                            elif jobconf.autorestart is True:
+                                logger.log(f"[taskmasterd]: restarting process #{proc.pid}", 'info')
                                 new_process = subprocess.Popen(jobconf.cmd.split(), text=True, preexec_fn=initchild, env=child_env)
                                 new_procs.append((new_process, retries + 1, time.time()))
                                 child_pids.append(new_process.pid)
                                 child_pids.pop(child_pids.index(proc.pid))
                             total_pids[job_pid] = child_pids
-                            print(child_pids)
                             queue_out.put(total_pids)
                         else:
                             new_procs.append((proc, retries, start_time))

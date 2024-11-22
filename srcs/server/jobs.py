@@ -1,5 +1,5 @@
 try:
-    import yaml, os, start, stop, time, server
+    import yaml, os, start, stop, time, taskmasterd, jobs
     from modules.logger_config import logger
     from modules.job_conf import JobConf
 except ImportError as e:
@@ -54,7 +54,6 @@ def parse_jobsname(jobs_name, cmd, clientsocket):
                 jobs_targets.append(jobname)
         response = ""
         if not jobs_targets:
-            print('jobs_targets: ', jobs_targets)
             if to_remove:
                 to_remove_response = {
                     'start': f'cannot start job(s) {to_remove} : already started.\n',
@@ -65,10 +64,6 @@ def parse_jobsname(jobs_name, cmd, clientsocket):
                 clientsocket.sendall(bytes(response, 'utf-8'))
         new_jobsname = jobs_targets
     return new_jobsname
-
-def restart_jobs(jobs_name, is_hup:False):
-    stop.stop_jobs(jobs_name=jobs_name, is_hup=is_hup)
-    start.start_jobs(jobs_name=jobs_name)
 
 def handle_rpl(cmd, clientsocket, jobs_name):
     started = []
@@ -81,7 +76,6 @@ def handle_rpl(cmd, clientsocket, jobs_name):
                 starttime = total_jobs[jobname].starttime
                 if starttime > maximum_starttime:
                     maximum_starttime = starttime + 1
-        print('maximum_starttime : ', maximum_starttime)
         time.sleep(maximum_starttime)
     if start.launched:
         for jobname in jobs_name:
@@ -91,17 +85,25 @@ def handle_rpl(cmd, clientsocket, jobs_name):
                 stopped.append(jobname) 
         to_return_response = {
             'start': f'The following task(s) have been successfully started: {", ".join(started)}.\n',
+            'restart': f'The following task(s) have been successfully restarted: {", ".join(started)}.\n',
             'stop': f'The following task(s) have been successfully stopped: {", ".join(stopped)}.\n',
         }
         response = to_return_response[cmd]
+        logger.log(response, 'info')
         if response:
             clientsocket.sendall(bytes(response, 'utf-8'))
 
 exec = {
     'start': lambda jobs_name: start.start_jobs(jobs_name=jobs_name),
     'stop': lambda jobs_name: stop.stop_jobs(jobs_name=jobs_name, is_hup=False),
-    'restart': lambda jobs_name: restart_jobs(jobs_name=jobs_name, is_hup=False),
+    'restart': lambda jobs_name, clientsocket: restart_jobs(jobs_name=jobs_name, is_hup=False, clientsocket=clientsocket),
 }
+
+def restart_jobs(jobs_name, is_hup:False, clientsocket):
+    stop.stop_jobs(jobs_name=jobs_name, is_hup=True)
+    jobs.load_conf()
+    start.start_jobs(jobs_name=jobs_name)
+    handle_rpl(cmd='restart', clientsocket=clientsocket, jobs_name=jobs_name)
 
 def is_valid_command(cmd, data_received):
     args = data_received.split()
@@ -136,11 +138,9 @@ def init_jobs(data_received: str, clientsocket):
             jobs_name = data_received.split()
             cmd = jobs_name.pop(0)
             response = is_valid_command(cmd=cmd, data_received=data_received)
-            print(response)
             if 'error' in response:
                 logger.log(response['error'], 'error')
                 clientsocket.sendall((bytes(response['error'] + '\n', 'utf-8')))
-                server.is_first = False
                 return
             else:
                 if response['command'] == 'reload':
@@ -151,16 +151,13 @@ def init_jobs(data_received: str, clientsocket):
                     level = 'info'
                     logger.log(response, level)
                     clientsocket.sendall((bytes(response + '\n', 'utf-8')))
-                    server.is_first = False
                     return
+                elif cmd == 'restart':
+                    exec[cmd](jobs_name=jobs_name, clientsocket=clientsocket)
                 else:
-                    print('ca rentre la ?')
                     jobs_name = parse_jobsname(jobs_name=jobs_name, cmd=cmd, clientsocket=clientsocket)
-                    print('jobsname : ', jobs_name)
                     if jobs_name:
                         exec[cmd](jobs_name=jobs_name)
                         handle_rpl(cmd=cmd, clientsocket=clientsocket, jobs_name=jobs_name)
     except Exception as error:
         logger.log(f'[taskmasterd]: unexpected error occurred in function [ init_jobs ] : {error}', 'error')
-    finally:
-        server.is_first = False

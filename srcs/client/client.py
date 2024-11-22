@@ -29,7 +29,7 @@ def handle_line(line: str) -> int:
     return 0
 
 if __name__ == '__main__':
-    priv_deescalation(proc='taskmasterctl')
+    priv_deescalation(target_user='hkrifa', proc='taskmasterctl')
     auto_completion()
     clientsocket = MySocket(socket.gethostname(), 4442, 'client')
     msg = clientsocket.receive_data()

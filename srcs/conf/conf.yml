@@ -1,17 +1,17 @@
 ls:
-  cmd: "/usr/bin/"
+  cmd: "/usr/bin/ls"
   numprocs: 1
   umask: 022
-  workingdir: /home
+  workingdir: /home/hkrifa/Bureau/taskmaster
   autostart: false
-  autorestart: true
+  autorestart: false
   exitcodes:
     - 0
     - 2
   startretries: 1
-  starttime: 5
+  starttime: 1
   stopsignal: TERM
-  stoptime: 10
+  stoptime: 1
   stdout: /tmp/ls.stdout
   stderr: /tmp/ls.stderr
   env:
@@ -20,18 +20,18 @@ ls:
 
 ping:
   cmd: "/usr/bin/ping 8.8.8.8"
-  numprocs: 1
+  numprocs: 3
   umask: 077
   workingdir: /home
   autostart: true
-  autorestart: unexpected
+  autorestart: true
   exitcodes:
     - 0
     - 2
   startretries: 2
   starttime: 2
   stopsignal: TERM
-  stoptime: 10
+  stoptime: 1
   stdout: /tmp/ping.stdout
   stderr: /tmp/ping.stderr
   env:
@@ -40,8 +40,28 @@ ping:
 
 env:
   cmd: "/usr/bin/python3 /home/hkrifa/Bureau/taskmaster/tests/print_env.py"
-  numprocs: 3
+  numprocs: 1
   umask: 077
+  workingdir: /home
+  autostart: false
+  autorestart: unexpected
+  exitcodes:
+    - 0
+    - 2
+  startretries: 2
+  starttime: 1
+  stopsignal: TERM
+  stoptime: 1
+  stdout: /tmp/env.stdout
+  stderr: /tmp/env.stderr
+  env:
+    STARTED_BY: taskmaster
+    ANSWER: 42
+
+sleep:
+  cmd: "/usr/bin/python3 /home/hkrifa/Bureau/taskmaster/tests/sleep.py"
+  numprocs: 1
+  umask: 062
   workingdir: /home
   autostart: true
   autorestart: unexpected
@@ -49,51 +69,11 @@ env:
     - 0
     - 2
   startretries: 2
-  starttime: 10
+  starttime: 1
   stopsignal: TERM
-  stoptime: 10
-  stdout: /tmp/env.stdout
-  stderr: /tmp/env.stderr
-  # env:
-  #   STARTED_BY: taskmaster
-  #   ANSWER: 42
-
-sleep:
-  cmd: "/usr/bin/python3 /home/hkrifa/Bureau/taskmaster/tests/sleep.py"
-  numprocs: 1
-  umask: 077
-  workingdir: /home
-  autostart: true
-  autorestart: unexpected
-  exitcodes:
-    - 0
-    - 2
-  startretries: 1
-  starttime: 10
-  stopsignal: TERM
-  stoptime: 10
+  stoptime: 1
   stdout: /tmp/sleep.stdout
   stderr: /tmp/sleep.stderr
-  env:
-    STARTED_BY: taskmaster
-    ANSWER: 42
-
-date:
-  cmd: "/usr/bin/python3 /home/hkrifa/Bureau/taskmaster/tests/date.py"
-  numprocs: 1
-  umask: 077
-  workingdir: /home
-  autostart: true
-  autorestart: unexpected
-  exitcodes:
-    - 0
-    - 2
-  startretries: 1
-  starttime: 5
-  stopsignal: HUP
-  stoptime: 10
-  stdout: /tmp/date.stdout
-  stderr: /tmp/date.stderr
   env:
     STARTED_BY: taskmaster
     ANSWER: 42
