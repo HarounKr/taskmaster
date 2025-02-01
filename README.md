@@ -36,7 +36,7 @@ python3 -m pip install -r requirement.txt
 ```bash
 python3 srcs/server/taskmasterd.py
 ```
-The server reads the configuration and manages the programs specified in conf.yml.
+The server reads the configuration and manages the programs specified in conf.yml.  
 7. **Start the client:**
 ```bash
 python3 srcs/client/taskmasterctl.py
