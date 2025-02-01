@@ -34,12 +34,12 @@ python3 -m pip install -r requirement.txt
 ```
 6. **Start the daemon:**
 ```bash
-python3 -B srcs/server/taskmasterd.py
+python3 srcs/server/taskmasterd.py
 ```
 The server reads the configuration and manages the programs specified in conf.yml.
 7. **Start the client:**
 ```bash
-python3 -B srcs/client/taskmasterctl.py
+python3 srcs/client/taskmasterctl.py
 ```
 The client sends commands to the server to start/stop/restart jobs.
 
